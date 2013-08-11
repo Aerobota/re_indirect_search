@@ -1,0 +1,18 @@
+<package>
+  <description brief="re_indirect_search">
+
+     re_indirect_search
+
+  </description>
+  <author>gajan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/re_indirect_search</url>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="json_prolog"/>
+  <depend package="mod_semantic_map"/>
+
+</package>
+
+

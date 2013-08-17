@@ -1,0 +1,18 @@
+# Here we have a one-to-one mapping between small objects and their RoboEarth definitions
+book,http://ias.cs.tum.edu/kb/knowrob.owl#BookCopy
+bottle,http://ias.cs.tum.edu/kb/knowrob.owl#DrinkingBottle
+faucet,http://ias.cs.tum.edu/kb/knowrob.owl#Tap-FlowControlDevice
+paper,http://ias.cs.tum.edu/kb/knowrob.owl#Paper-IBO
+bowl,http://ias.cs.tum.edu/kb/knowrob.owl#Bowl-Eating
+box,http://ias.cs.tum.edu/kb/knowrob.owl#Box
+cup,http://ias.cs.tum.edu/kb/knowrob.owl#Cup
+bag,http://ias.cs.tum.edu/kb/knowrob.owl#Bag
+picture
+vase 
+electricalOutlet
+cushion 
+towel
+tissueBox
+clothes,http://ias.cs.tum.edu/kb/knowrob.owl#Cloth
+floorMat
+lamp

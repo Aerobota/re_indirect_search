@@ -4,13 +4,14 @@
      re_indirect_search
 
   </description>
-  <author>gajan</author>
+  <author>Dominique Hunziker</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/re_indirect_search</url>
+
   <depend package="rospy"/>
-  <depend package="roscpp"/>
-  <depend package="json_prolog"/>
+  <depend package="geometry_msgs"/>
+
   <depend package="mod_semantic_map"/>
 
 </package>

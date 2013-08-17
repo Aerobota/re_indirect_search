@@ -1,0 +1,26 @@
+# Here we have a one-to-one mapping between large objects and their RoboEarth definitions
+bed,http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture
+blinds
+bookshelf,http://ias.cs.tum.edu/kb/knowrob.owl#ShelfInABuilding
+cabinet,http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture
+ceiling,http://ias.cs.tum.edu/kb/knowrob.owl#TopWall
+chair,http://ias.cs.tum.edu/kb/knowrob.owl#Chair-PieceOfFurniture
+counter,http://ias.cs.tum.edu/kb/knowrob.owl#CounterTop
+curtain
+desk
+door,http://ias.cs.tum.edu/kb/knowrob.owl#Door
+dresser
+floor,http://ias.cs.tum.edu/kb/knowrob.owl#FloorPlan
+garbageBin,http://ias.cs.tum.edu/kb/knowrob.owl#TrashContainer
+light
+mirror
+nightStand
+plant
+screen
+shelves,http://ias.cs.tum.edu/kb/knowrob.owl#ShelfInABuilding
+sink,http://ias.cs.tum.edu/kb/knowrob.owl#Sink
+sofa,http://ias.cs.tum.edu/kb/knowrob.owl#Sofa-PieceOfFurniture
+table,http://ias.cs.tum.edu/kb/knowrob.owl#Table-PieceOfFurniture
+television,http://ias.cs.tum.edu/kb/knowrob.owl#TelevisionSet
+wall,http://ias.cs.tum.edu/kb/knowrob.owl#BackWall
+window

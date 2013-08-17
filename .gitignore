@@ -1,12 +1,16 @@
+# ROS package artifacts
+build/
+lib/
+bin/
+srv_gen/
+src/re_indirect_search/srv
+
+# Binary & BackUp files
 *.pyc
+*.bak
 *~
-__init__.py
-.cproject
+
+# Eclipse project files
 .project
 .pydevproject
-cmake_install.cmake
-build/
-bin/
-lib/
-msg_gen/
-srv_gen/
+.settings

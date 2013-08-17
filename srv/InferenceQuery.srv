@@ -1,0 +1,6 @@
+mod_semantic_map/SemMap map
+string                  query_object
+---
+bool                    status
+geometry_msgs/Point[]   locations
+float64[]               probabilities

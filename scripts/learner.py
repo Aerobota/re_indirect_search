@@ -70,7 +70,7 @@ def dump(args):
     with open(args.filename, 'w') as f:
         f.write('Brief summary of the GMM Models:\n')
 
-        for key, mixture in model.iteritems():
+        for key, mixture in model._model.iteritems():
             f.write('Learned parameters for the class pair: {key}\n'
                     'Number of components: {components}\n'
                     'Number of samples: {samples}\n'

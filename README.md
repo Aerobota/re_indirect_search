@@ -13,6 +13,7 @@ Before rosmake you may nedd to install the python module scikit-learn
 
 ### Batch Learning
 -	Create a backup of the GMM model
+
 		rosrun re_indirect_serach learn.py clean 
 -	Learn all GMM models
 		rosrun re_indirect_search learn.py

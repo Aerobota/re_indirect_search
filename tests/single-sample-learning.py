@@ -60,7 +60,7 @@ def main():
 
     print('Run Learn query...')
     learn = rospy.ServiceProxy('learn', LearnQuery)
-    learn(init_map(0.0, 0.0, 0.0), 'serial box', Point(0.5, 0.4, 0.3))
+    learn(init_map(0.0, 0.0, 0.0), 'cereal box', Point(0.5, 0.4, 0.3))
 
     try:
         rospy.wait_for_service('infer')
@@ -70,7 +70,7 @@ def main():
 
     print('Run Inference query...')
     infer = rospy.ServiceProxy('infer', InferenceQuery)
-    candidates = infer(init_map(0.6, 0.6, 0.6), 'serial box')
+    candidates = infer(init_map(0.6, 0.6, 0.6), 'cereal box')
 
     if not candidates.status:
         print('Inference query could not be processed.')

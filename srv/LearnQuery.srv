@@ -1,4 +1,3 @@
 mod_semantic_map/SemMap map
-string                  object
-geometry_msgs/Point     location
 ---
+bool status

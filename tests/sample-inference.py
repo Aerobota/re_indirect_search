@@ -40,7 +40,7 @@ def init_map():
     obj = SemMapObject()
     obj.id = 1
     obj.partOf = 0
-    obj.type = 'cabinet'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
     obj.depth = 1
     obj.width = 1
     obj.height = 1
@@ -53,7 +53,7 @@ def init_map():
     obj = SemMapObject()
     obj.id = 1
     obj.partOf = 0
-    obj.type = 'bed'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
     obj.depth = 1
     obj.width = 1
     obj.height = 1
@@ -67,6 +67,7 @@ def init_map():
 
 
 def main():
+    print 'Waiting for the inference service...'
     try:
         rospy.wait_for_service('infer')
     except rospy.ROSException:
@@ -75,7 +76,7 @@ def main():
 
     print('Run Inference query...')
     infer = rospy.ServiceProxy('infer', InferenceQuery)
-    candidates = infer(init_map(), 'bottle')
+    candidates = infer(init_map(), 'http://ias.cs.tum.edu/kb/knowrob.owl#DrinkingBottle')
 
     if not candidates.status:
         print('Inference query could not be processed.')

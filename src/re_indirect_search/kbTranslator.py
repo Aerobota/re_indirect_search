@@ -26,6 +26,7 @@
 #
 #
 import ConfigParser, os
+from mod_semantic_map.msg import SemMap, SemMapObject
 
 class kbTranslator(object):
     """ Model has to be either initialized or loaded!
@@ -38,6 +39,8 @@ class kbTranslator(object):
         self.smallObjDict = self.ConfigSectionMap(_config, 'small_objects')
         self.largeObjDict = self.ConfigSectionMap(_config, 'large_objects')
         self.objDict = dict(self.largeObjDict.items()+self.smallObjDict.items())
+        self.invLargeObjDict = self.inverseDict(self.largeObjDict) #Assuming one-to-one mapping
+        self.invSmallObjDict = self.inverseDict(self.smallObjDict) #Assuming one-to-one mapping
         
     def ConfigSectionMap(self, config, section):
         dict1 = {}
@@ -53,6 +56,35 @@ class kbTranslator(object):
             if dict1[option] == '': dict1[option] = 'http://ias.cs.tum.edu/kb/knowrob.owl#'+ option
         return dict1
         
+    def inverseDict(self, dict):
+        return {v:k for k,v in dict.items()}
+    
+    def split_into_known_large_and_small_objects(self, semMap):
+        
+        known_small_objects = []
+        known_large_objects = []
+        for object in semMap.objects:
+            try:
+                object.type=self.invLargeObjDict[object.type]
+                known_large_objects.append(object)
+            except:
+                try:
+                    object.type=self.invSmallObjDict[object.type]
+                    known_small_objects.append(object)
+                except:
+                    pass
+                
+        return [known_large_objects,known_small_objects]
+    
+    def translate_KBtoNYU_small_objects(self, KBtype):
+
+        try:
+            NYUtype = self.invSmallObjDict[KBtype]
+            return NYUtype
+        except:
+            return ''
+    
+    
         
         
         

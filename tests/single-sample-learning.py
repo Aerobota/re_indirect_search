@@ -41,7 +41,7 @@ def init_map(x, y, z):
     obj = SemMapObject()
     obj.id = 1
     obj.partOf = 0
-    obj.type = 'table'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
     obj.pose = [1.0, 0.0, 0.0, x,
                 0.0, 1.0, 0.0, y,
                 0.0, 0.0, 1.0, z,
@@ -60,7 +60,25 @@ def main():
 
     print('Run Learn query...')
     learn = rospy.ServiceProxy('learn', LearnQuery)
-    learn(init_map(0.0, 0.0, 0.0), 'cereal box', Point(0.5, 0.4, 0.3))
+    
+    #init map with cabinet
+    sem_map = init_map(0.0, 0.0, 0.0)
+    
+    #Add cereal box
+    obj = SemMapObject()
+    obj.id = 1
+    obj.partOf = 0
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal'
+    obj.pose = [1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.2,
+                0.0, 0.0, 0.0, 1.0]
+    sem_map.objects.append(obj)
+    
+    print 'Call one shot learning...'
+    print learn(sem_map).status
+    
+    
 
     try:
         rospy.wait_for_service('infer')
@@ -70,7 +88,7 @@ def main():
 
     print('Run Inference query...')
     infer = rospy.ServiceProxy('infer', InferenceQuery)
-    candidates = infer(init_map(0.6, 0.6, 0.6), 'cereal box')
+    candidates = infer(init_map(0.6, 0.6, 0.6), 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal')
 
     if not candidates.status:
         print('Inference query could not be processed.')

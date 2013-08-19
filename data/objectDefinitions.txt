@@ -12,7 +12,7 @@ door:http://ias.cs.tum.edu/kb/knowrob.owl#Door
 dresser:
 floor:http://ias.cs.tum.edu/kb/knowrob.owl#FloorPlan
 garbageBin:http://ias.cs.tum.edu/kb/knowrob.owl#TrashContainer
-light: #over exposed white area: KnowRobo Definition can be none or equivalent
+light:
 mirror:
 nightStand:
 plant:
@@ -43,3 +43,4 @@ tissueBox:
 clothes:http://ias.cs.tum.edu/kb/knowrob.owl#Cloth
 floorMat:
 lamp:
+BreakfastCereal:http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal

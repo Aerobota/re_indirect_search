@@ -35,7 +35,6 @@ import rospy
 
 from mod_semantic_map.msg import SemMap, SemMapObject
 
-
 #importing the necessary modules for learning
 from re_indirect_search.model import ModelError, GMMModel
 from re_indirect_search.data_structure import NYUDataStructure
@@ -43,15 +42,10 @@ from re_indirect_search.learner import ContinuousGMMLearner
 from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
 from re_indirect_search.kbTranslator import kbTranslator
 
-
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
-
-
-
-
 
 def uploader(sleepTime):
     model = GMMModel()

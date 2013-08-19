@@ -41,6 +41,7 @@ from re_indirect_search.model import ModelError, GMMModel
 from re_indirect_search.data_structure import NYUDataStructure
 from re_indirect_search.learner import ContinuousGMMLearner
 from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
+from re_indirect_search.kbTranslator import kbTranslator
 
 
 ## SET PARAMETERS
@@ -49,18 +50,24 @@ DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
 
+
+
+
 def uploader(sleepTime):
     model = GMMModel()
     evidenceGenerator=CylindricalEvidenceGenerator(DATA_PATH);
     model.init(evidenceGenerator,
                NYUDataStructure(DATA_PATH, 'all'))
+    translator = kbTranslator(DATA_PATH)
+
 
     pub =rospy.Publisher('NYUSemMap',SemMap)
     
     print 'Getting ready to go through the full dataset...'
     frameID = 0
     for scene in model._data_set.images:
-        
+        print 'Processing frameID# - '+str(frameID)
+
         objs = scene.objects
         pos = evidenceGenerator._get_position_evidence(objs)
         names = tuple(obj.name for obj in objs)
@@ -72,20 +79,18 @@ def uploader(sleepTime):
         display = False
         for i in range(len(names)):
             semObj = SemMapObject()
-            semObj.type = names[i]
+            try:
+                type=translator.objDict[names[i]]
+            except:
+                type=names[i]
+            semObj.type = type
             semObj.pose = [1.0, 0.0, 0.0, pos[0][i],
                 0.0, 1.0, 0.0, pos[1][i],
                 0.0, 0.0, 1.0, pos[2][i],
                 0.0, 0.0, 0.0, 1.0]
             semMap.objects.append(semObj)
-            
-            #debugging
-            if names[i] == 'light':
-                display = True
-        
-        if display==True:
-            print frameID
-            print names
+    
+    
         
         #publish the generate SemMap
         pub.publish(semMap)
@@ -99,6 +104,6 @@ if __name__ == '__main__':
     try:
         sleepTime = float(sys.argv[1])
     except:
-        sleepTime = 5.0; # default interval between topics
-        
+        sleepTime = 5.0; # default interval between topics   
+    
     uploader(sleepTime)

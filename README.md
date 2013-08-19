@@ -22,6 +22,15 @@ Before rosmake you may nedd to install the python module scikit-learn
 
 		rosrun re_indirect_search dump <filename>
 
+### Inference 
+-	Run the indirect_search node 
+
+		rosrun re_indirect_search re_indirect_search
+-	Test by running
+
+		cd tests/
+		./sample-inference.py
+	This script uses the InferenceQuery.srv defined in this package
 
 ### One Shot Learning 
 -	Run the indirect_search node 
@@ -31,16 +40,9 @@ Before rosmake you may nedd to install the python module scikit-learn
 
 		cd tests/
 		./single-sample-learning.py
-
+	
  
-### Inference 
--	Run the indirect_search node 
 
-		rosrun re_indirect_search re_indirect_search
--	Test by running
-
-		cd tests/
-		./sample-inference.py
 
  
 

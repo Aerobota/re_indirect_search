@@ -96,6 +96,23 @@ class GMMModel(object):
         except IOError:
             raise ModelError('Model could not be saved.')
 
+    def get_log(self):
+        """ Get a nicely formatted text detailing the model.
+        """
+        return '\n\n'.join('Learned parameters for the class pair: {key}\n'
+                           'Number of components: {components}\n'
+                           'Number of samples: {samples}\n'
+                           'Weights:\n{weights}\n'
+                           'Means:\n{means}\n'
+                           'Covariances:\n{covariances}'.format(
+                               key=key,
+                               components=mixture.CLF.n_components,
+                               samples=mixture.numSamples,
+                               weights=mixture.CLF.weights_,
+                               means=mixture.CLF.means_,
+                               covariances=mixture.CLF.covars_)
+                           for key, mixture in self._model.iteritems())
+
     def has_mixture(self, object_pair):
         """ Callback for Learner to check if there is already a mixture
             registered for the given object pair.

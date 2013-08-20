@@ -36,7 +36,7 @@ from re_indirect_search.srv import LearnQuery, InferenceQuery
 
 def init_map(x, y, z):
     sem_map = SemMap()
-    sem_map.header.frame_id = "http://www.example.com/foo.owl#"
+    sem_map.header.frame_id = 'http://www.example.com/foo.owl#'
 
     obj = SemMapObject()
     obj.id = 1
@@ -60,10 +60,10 @@ def main():
 
     print('Run Learn query...')
     learn = rospy.ServiceProxy('learn', LearnQuery)
-    
+
     #init map with cabinet
     sem_map = init_map(0.0, 0.0, 0.0)
-    
+
     #Add cereal box
     obj = SemMapObject()
     obj.id = 1
@@ -74,11 +74,9 @@ def main():
                 0.0, 0.0, 1.0, 0.2,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)
-    
-    print 'Call one shot learning...'
-    print learn(sem_map).status
-    
-    
+
+    print('Call one shot learning...')
+    print(learn(sem_map).status)
 
     try:
         rospy.wait_for_service('infer')
@@ -96,7 +94,7 @@ def main():
 
     print('Result:')
     for pos, prob in zip(candidates.locations, candidates.probabilities):
-        print '  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob)
+        print('  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob))
 
 
 if __name__ == '__main__':

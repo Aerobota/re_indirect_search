@@ -26,8 +26,8 @@
 #
 #
 
+import sys
 import os.path
-import time,sys
 
 import roslib; roslib.load_manifest('re_indirect_search')
 from rospkg import RosPack
@@ -35,69 +35,68 @@ import rospy
 
 from mod_semantic_map.msg import SemMap, SemMapObject
 
-#importing the necessary modules for learning
-from re_indirect_search.model import ModelError, GMMModel
+from re_indirect_search.model import GMMModel
 from re_indirect_search.data_structure import NYUDataStructure
-from re_indirect_search.learner import ContinuousGMMLearner
 from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
-from re_indirect_search.kbTranslator import kbTranslator
+from re_indirect_search.kb_translator import KBTranslator
+
 
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
+
 def uploader(sleepTime):
     model = GMMModel()
-    evidenceGenerator=CylindricalEvidenceGenerator(DATA_PATH);
-    model.init(evidenceGenerator,
+    evidence_generator = CylindricalEvidenceGenerator(DATA_PATH);
+    model.init(evidence_generator,
                NYUDataStructure(DATA_PATH, 'all'))
-    translator = kbTranslator(DATA_PATH)
+    translator = KBTranslator(DATA_PATH)
 
+    pub = rospy.Publisher('NYUSemMap', SemMap)
 
-    pub =rospy.Publisher('NYUSemMap',SemMap)
-    
-    print 'Getting ready to go through the full dataset...'
+    print('Getting ready to go through the full dataset...')
     frameID = 0
+
     for scene in model._data_set.images:
-        print 'Processing frameID# - '+str(frameID)
+        print('Processing frameID# - {0}'.format(frameID))
 
         objs = scene.objects
-        pos = evidenceGenerator._get_position_evidence(objs)
-        names = tuple(obj.name for obj in objs)
-        
-        semMap = SemMap()
-        semMap.header.frame_id = "NYU-DATASET#"+str(frameID)
-        
-        semMap.header.stamp = rospy.get_rostime()
-        display = False
-        for i in range(len(names)):
-            semObj = SemMapObject()
+        pos = evidence_generator.get_position_evidence(objs)
+
+        sem_map = SemMap()
+        sem_map.header.frame_id = 'NYU-DATASET#{0}'.format(frameID)
+        sem_map.header.stamp = rospy.get_rostime()
+
+        for i, name in enumerate(obj.name for obj in objs):
+            sem_obj = SemMapObject()
+
             try:
-                type=translator.objDict[names[i]]
-            except:
-                type=names[i]
-            semObj.type = type
-            semObj.pose = [1.0, 0.0, 0.0, pos[0][i],
-                0.0, 1.0, 0.0, pos[1][i],
-                0.0, 0.0, 1.0, pos[2][i],
-                0.0, 0.0, 0.0, 1.0]
-            semMap.objects.append(semObj)
-    
-    
-        
+                sem_obj.type = translator.objDict[name]
+            except KeyError:
+                sem_obj.type = name
+
+            sem_obj.pose = [1.0, 0.0, 0.0, pos[0][i],
+                            0.0, 1.0, 0.0, pos[1][i],
+                            0.0, 0.0, 1.0, pos[2][i],
+                            0.0, 0.0, 0.0, 1.0]
+
+            sem_map.objects.append(sem_obj)
+
         #publish the generate SemMap
-        pub.publish(semMap)
-        
+        pub.publish(sem_map)
+
         frameID += 1
         rospy.sleep(sleepTime)
-        
+
 
 if __name__ == '__main__':
     rospy.init_node('evidence_uploader')
+
     try:
         sleepTime = float(sys.argv[1])
     except:
-        sleepTime = 5.0; # default interval between topics   
-    
+        sleepTime = 5.0; # default interval between topics
+
     uploader(sleepTime)

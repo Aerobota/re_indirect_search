@@ -68,21 +68,8 @@ def dump(args):
         return
 
     with open(args.filename, 'w') as f:
-        f.write('Brief summary of the GMM Models:\n')
-
-        for key, mixture in model._model.iteritems():
-            f.write('Learned parameters for the class pair: {key}\n'
-                    'Number of components: {components}\n'
-                    'Number of samples: {samples}\n'
-                    'Weights:\n{weights}\n'
-                    'Means:\n{means}\n'
-                    'Covariances:\n{covariances}\n'.format(
-                        key=key,
-                        components=mixture.CLF.n_components,
-                        samples=mixture.numSamples,
-                        weights=mixture.CLF.weights_,
-                        means=mixture.CLF.means_,
-                        covariances=mixture.CLF.covars_))
+        f.write('Brief summary of the GMM Models:\n\n')
+        f.write(model.get_log())
 
 
 def learn(args):

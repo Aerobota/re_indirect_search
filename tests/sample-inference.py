@@ -35,7 +35,7 @@ from re_indirect_search.srv import InferenceQuery
 
 def init_map():
     sem_map = SemMap()
-    sem_map.header.frame_id = "http://www.example.com/foo.owl#"
+    sem_map.header.frame_id = 'http://www.example.com/foo.owl#'
 
     obj = SemMapObject()
     obj.id = 1
@@ -67,7 +67,8 @@ def init_map():
 
 
 def main():
-    print 'Waiting for the inference service...'
+    print('Waiting for the inference service...')
+
     try:
         rospy.wait_for_service('infer')
     except rospy.ROSException:
@@ -84,7 +85,7 @@ def main():
 
     print('Result:')
     for pos, prob in zip(candidates.locations, candidates.probabilities):
-        print '  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob)
+        print('  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob))
 
 
 if __name__ == '__main__':

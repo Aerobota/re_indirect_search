@@ -217,8 +217,8 @@ class SmallObject(object):
         queried. In the case of learning from one sample scenario, the location
         field has to be specified as well.
     """
-    def __init__(self, type, loc=None):
-        self.type = type
+    def __init__(self, obj_type, loc=None):
+        self.type = obj_type
 
         if loc is not None:
             self.loc = loc

@@ -91,12 +91,12 @@ class LocationEvidenceGenerator(EvidenceGenerator):
     '''
     implements(IEvidenceGenerator)
 
-    def _get_position_evidence(self, objects):
+    def get_position_evidence(self, objects):
         """ objects: IObject
         """
         raise NotImplementedError
 
-    def _get_relative_evidence(self, a, b):
+    def get_relative_evidence(self, a, b):
         """
         """
         raise NotImplementedError
@@ -118,8 +118,8 @@ class LocationEvidenceGenerator(EvidenceGenerator):
         # go through each room scanning for evidence
         for image in data_set.images:
             objs = image.objects
-            pos = self._get_position_evidence(objs)
-            relEvidence = self._get_relative_evidence(pos, pos)
+            pos = self.get_position_evidence(objs)
+            relEvidence = self.get_relative_evidence(pos, pos)
             names = tuple(obj.name for obj in objs)
 
             #storing also the distance of small-small and large-large object occurrences
@@ -167,7 +167,7 @@ class LocationEvidenceGenerator(EvidenceGenerator):
             objPos[:, i] = np.array(get_location(objs[val].pose))
 
         evidence['absEvidence'] = self._generate_mesh(objPos, epsilon, delta)
-        evidence['relEvidence'] = self._get_relative_evidence(objPos, evidence['absEvidence'])
+        evidence['relEvidence'] = self.get_relative_evidence(objPos, evidence['absEvidence'])
 
         return evidence
 
@@ -250,14 +250,14 @@ class CylindricalEvidenceGenerator(LocationEvidenceGenerator):
     returned evidence is 2-dimensional where the first dimension is the
     horizontal distance and the second the height.
     '''
-    def _get_position_evidence(self, objs):
+    def get_position_evidence(self, objs):
         '''
         Return the positions of each object in the image
         as a matrix of column stacked 3d-positions.
         '''
         return np.vstack(obj.pos for obj in objs).transpose()
 
-    def _get_relative_evidence(self, sourcePos, targetPos):
+    def get_relative_evidence(self, sourcePos, targetPos):
         '''
         Returns cylindrical evidence as a 3D-array of
         1. Object-to-object distance matrix in xz-coordinates (radius)

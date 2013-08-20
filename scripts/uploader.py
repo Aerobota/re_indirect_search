@@ -73,7 +73,7 @@ def uploader(sleepTime):
             sem_obj = SemMapObject()
 
             try:
-                sem_obj.type = translator.objDict[name]
+                sem_obj.type = translator.obj[name]
             except KeyError:
                 sem_obj.type = name
 

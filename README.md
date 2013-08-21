@@ -12,7 +12,7 @@ Before rosmake you may nedd to install the python module scikit-learn
 ###Usage
 
 #### Batch Learning
-due to pickle issues this has to be done everytime. TODO: Fix path issues
+due to pickle issues this has to be done everytime. TODO: Fix pickle/path issues
 -	Create a backup of the GMM model
 
 		rosrun re_indirect_serach learn.py clean 
@@ -33,7 +33,7 @@ due to pickle issues this has to be done everytime. TODO: Fix path issues
 		./sample-inference.py
 	This script uses the InferenceQuery.srv defined in this package. See script for more details.
 
-#### One Shot Learning 
+#### One Shot Learning (For RoboEarth Demos Only)
 -	Run the indirect_search node 
 
 		rosrun re_indirect_search re_indirect_search
@@ -51,6 +51,7 @@ due to pickle issues this has to be done everytime. TODO: Fix path issues
 
 ### Notes for RoboEarth Final Demonstrator
 -	Fine tuning the parameters is still a TODO. You may see some surprising values.
+-	For naming convensions see data/objectDefinitions.txt. This file has a one-to-one mapping between KnowRob definitions and the names used in the NYU dataset. 
 
 
 

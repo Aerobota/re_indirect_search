@@ -12,11 +12,10 @@ Before rosmake you may nedd to install the python module scikit-learn
 ###Usage
 
 #### Batch Learning
-due to pickle issues the learning has to be done everytime you install the package. 
-TODO: Fix pickle/path issues
 -	Learn all GMM models (and go for a coffee)
 
 		rosrun re_indirect_search learn.py
+	Note that the learning has to be done when you install the package for the first time
 -	Get a dump of all the GMM models
 
 		rosrun re_indirect_search dump <filename>

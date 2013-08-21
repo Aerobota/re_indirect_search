@@ -97,6 +97,6 @@ if __name__ == '__main__':
     try:
         sleepTime = float(sys.argv[1])
     except:
-        sleepTime = 5.0; # default interval between topics
+        sleepTime = 1.0; # default interval between topics
 
     uploader(sleepTime)

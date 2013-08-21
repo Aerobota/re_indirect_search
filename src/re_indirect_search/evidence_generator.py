@@ -33,9 +33,12 @@ import numpy as np
 from zope.interface import implements
 
 from re_indirect_search.interfaces import IEvidenceGenerator
+from re_indirect_search.kb_translator import KBTranslator
 
 
 get_location = lambda pose: (pose[3], pose[7], pose[11])
+
+
 
 
 class EvidenceGenerator(object):
@@ -71,15 +74,10 @@ class EvidenceGenerator(object):
         Loads large objects.
         '''
         if not self.largeObjects:
-            with open(os.path.join(self.data_dir, self.largeObjectDefinitionsFile), 'r') as f:
-                for line in f.readlines():
-                    line = line.strip()
+            TRANSLATOR = KBTranslator(self.data_dir)
+            self.largeObjects = [k for k, v in TRANSLATOR.large_obj.iteritems()]
 
-                    if line.startswith('#'):
-                        continue
-
-                    self.largeObjects.append(line.split(',')[0])
-
+        #why return?
         return self.largeObjects
 
 

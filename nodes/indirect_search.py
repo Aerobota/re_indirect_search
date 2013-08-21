@@ -76,7 +76,7 @@ def learn(req):
 
     print known_small_objects
 
-    final_candidates = [obj for obj in known_small_objects if obj in learning_candidates]
+    final_candidates = [obj for obj in known_small_objects if obj.type in learning_candidates]
 
     if not final_candidates:
         resp.status = False

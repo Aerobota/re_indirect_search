@@ -26,11 +26,6 @@
 #
 #
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle #@UnusedImport
-
 import numpy as np
 from sklearn import mixture
 

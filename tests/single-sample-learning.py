@@ -76,27 +76,28 @@ def main():
     sem_map.objects.append(obj)
 
     print('Call one shot learning...')
-    if learn(sem_map).status:
-        #Learning sucessful
-        try:
-            rospy.wait_for_service('infer')
-        except rospy.ROSException:
-            print("Timeout while waiting for ROS service 'infer'.")
-            return
-    
-        print('Run Inference query...')
-        infer = rospy.ServiceProxy('infer', InferenceQuery)
-        candidates = infer(init_map(0.6, 0.6, 0.6), 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal')
-    
-        if not candidates.status:
-            print('Inference query could not be processed.')
-            return
-    
-        print('Result:')
-        for pos, prob in zip(candidates.locations, candidates.probabilities):
-            print('  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob))
-    else:
-        print "Learning was not successful!"
+    if not learn(sem_map).status:
+        print('Learning was not successful!')
+        return
+
+    #Learning sucessful
+    try:
+        rospy.wait_for_service('infer')
+    except rospy.ROSException:
+        print("Timeout while waiting for ROS service 'infer'.")
+        return
+
+    print('Run Inference query...')
+    infer = rospy.ServiceProxy('infer', InferenceQuery)
+    candidates = infer(init_map(0.6, 0.6, 0.6), 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal')
+
+    if not candidates.status:
+        print('Inference query could not be processed.')
+        return
+
+    print('Result:')
+    for pos, prob in zip(candidates.locations, candidates.probabilities):
+        print('  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob))
 
 if __name__ == '__main__':
     main()

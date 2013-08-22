@@ -14,16 +14,16 @@ Before rosmake you may nedd to install the python module scikit-learn
 #### Batch Learning
 -	Learn all GMM models (and go for a coffee)
 
-		rosrun re_indirect_search learn.py
+		rosrun re_indirect_search learner.py learn
 	Note that the learning has to be done when you install the package for the first time
 -	Get a dump of all the GMM models
 
-		rosrun re_indirect_search dump <filename>
+		rosrun re_indirect_search learner.py dump <filename>
 
 #### Inference 
 -	Run the indirect_search node 
 
-		rosrun re_indirect_search re_indirect_search
+		rosrun re_indirect_search indirect_search.py
 -	Test by running
 
 		cd tests/
@@ -33,7 +33,7 @@ Before rosmake you may nedd to install the python module scikit-learn
 #### One Shot Learning (For RoboEarth Demos Only)
 -	Run the indirect_search node 
 
-		rosrun re_indirect_search re_indirect_search
+		rosrun re_indirect_search indirect_search.py
 -	Test by running
 
 		cd tests/

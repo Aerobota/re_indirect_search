@@ -9,10 +9,9 @@ import rospy
 from mod_semantic_map.msg import SemMap, SemMapObject
 from mod_semantic_map.srv import GenerateSemanticMapOWL
 
-
 def sem_map_to_OWL(sem_map):
 	rospy.wait_for_service('/knowrob_semantic_map_to_owl/generate_owl_map')
-
+	
 	try:
 		converter = rospy.ServiceProxy('/knowrob_semantic_map_to_owl/generate_owl_map', GenerateSemanticMapOWL)
 		response = converter(sem_map)
@@ -25,7 +24,7 @@ if __name__ == '__main__':
 	rospy.init_node('basic_converter')
 
 	print('basic-converter starting...')
-
+	
 	# create a semantic map
 	sem_map = SemMap()
 	sem_map.header.frame_id = "http://www.example.com/foo.owl#"
@@ -50,6 +49,5 @@ if __name__ == '__main__':
 
 	# convert
 	owl_string = sem_map_to_OWL(sem_map)
-
 	print owl_string
 	print('basic converter done')

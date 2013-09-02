@@ -33,12 +33,15 @@ import roslib; roslib.load_manifest('re_indirect_search')
 from rospkg import RosPack
 import rospy
 
+from mod_semantic_map.srv import GenerateSemanticMapOWL
 from mod_semantic_map.msg import SemMap, SemMapObject
+from re_srvs.srv import SetEnvironment
 
 from re_indirect_search.model import GMMModel
 from re_indirect_search.data_structure import NYUDataStructure
 from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
 from re_indirect_search.kb_translator import KBTranslator
+
 
 
 ## SET PARAMETERS
@@ -47,20 +50,34 @@ DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
 
-def uploader(sleepTime):
+
+
+def looper(uploader, converter):
     model = GMMModel()
     evidence_generator = CylindricalEvidenceGenerator(DATA_PATH);
     model.init(evidence_generator,
                NYUDataStructure(DATA_PATH, 'all'))
     translator = KBTranslator(DATA_PATH)
 
-    pub = rospy.Publisher('NYUSemMap', SemMap)
-
-    print('Getting ready to go through the full dataset...')
-    frameID = 0
+    ## Fixed Values
+    cls = 'NYU_Depth_Dataset_V2' #Environment Class
+    id_head = 'Scene_ID' #Environment ID
+    description = ('A scene from NYU Depth Dataset V2.'+ 
+                   'For more details see http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html.'+
+                   ' For the related software see http://github.com/IDSCETHZurich/re_indirect_search.git')
+        
+    environment = 'owl_string'
+    apiKey = '6e616a616758cf1e985a387853dbb32b4c9bc683203864ae3c'
+    files = []
+    
+    frameID = 1
 
     for scene in model._data_set.images:
+        print('Image name - {0}'.format(scene._obj_path))
+        
         print('Processing frameID# - {0}'.format(frameID))
+        if frameID > 0:
+            break
 
         objs = scene.objects
         pos = evidence_generator.get_position_evidence(objs)
@@ -84,19 +101,37 @@ def uploader(sleepTime):
 
             sem_map.objects.append(sem_obj)
 
-        #publish the generate SemMap
-        pub.publish(sem_map)
+        #convert the generate SemMap to owl
+        try:
+            converter_response = converter(sem_map)
+        except rospy.ServiceException as e:
+            print('Service call failed: {0}'.format(e))
+        
+        try:
+            uploader_response = uploader(cls, id_head+str(frameID), description, converter_response.owlmap, files, apiKey)
+        except rospy.ServiceException as e:
+            print('Service call failed: {0}'.format(e))
+        
+        if uploader_response.success:
+            print('frameID# - {0}: Upload successful.'.format(frameID))
+        else:
+            print('frameID# - {0}: Upload failed.'.format(frameID))
+
 
         frameID += 1
-        rospy.sleep(sleepTime)
 
 
 if __name__ == '__main__':
     rospy.init_node('evidence_uploader')
+    
+    print('Uploader script starting...')
+    print('waiting for the genrate_owl_map service...')
+    rospy.wait_for_service('/knowrob_semantic_map_to_owl/generate_owl_map')
+    print('waiting for re_comm/set_environment')
+    rospy.wait_for_service('re_comm/set_environment')
 
-    try:
-        sleepTime = float(sys.argv[1])
-    except:
-        sleepTime = 1.0; # default interval between topics
-
-    uploader(sleepTime)
+    uploader = rospy.ServiceProxy('re_comm/set_environment', SetEnvironment)
+    converter = rospy.ServiceProxy('/knowrob_semantic_map_to_owl/generate_owl_map', GenerateSemanticMapOWL)
+    
+    looper(uploader, converter)
+    

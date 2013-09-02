@@ -154,11 +154,11 @@ class Image(object):
         """
         """
         self._path = path
-        #self._img_name = str(img_name)
+        self._img_name = str(img_name)
         #self._depth_name = str(depth_name)
-        #self._dir_path = dir_path # No idea what this is exactly...
+        #self._dir_path = str(dir_path) # No idea what this is exactly...
         #self._img_size = img_size
-        #self._calib = calib
+        self._calib = calib
         self._obj_path = str(obj_path)
 
         self._objects = ()

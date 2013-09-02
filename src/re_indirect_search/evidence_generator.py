@@ -26,7 +26,6 @@
 #
 #
 
-import os.path
 import itertools
 import numpy as np
 
@@ -39,55 +38,34 @@ from re_indirect_search.kb_translator import KBTranslator
 get_location = lambda pose: (pose[3], pose[7], pose[11])
 
 
+class LocationEvidenceGenerator(object):
+    """ Produces location Evidence
+        This class is an abstract class that produces evidence of relative
+        and absolute locations of objects.
+    """
+    implements(IEvidenceGenerator)
 
-
-class EvidenceGenerator(object):
-    '''
-    Abstract base class
-    This base class exists only for structure.
-    '''
-    largeObjectDefinitionsFile = 'largeObjectDefinitions.txt'
+    _large_objects = ()
 
     def __init__(self, data_dir):
         """
         """
-        self.data_dir = data_dir
-
-        self._init()
-
-    def _init(self):
-        """ Initialization routine of cache attributes separate such that it can
-            be called from '__setstate__'.
-        """
-        self.largeObjects = []
+        self._data_dir = data_dir
 
     def __getstate__(self):
-        return self.data_dir
+        return self._data_dir
 
     def __setstate__(self, state):
-        self.data_dir = state
+        self._data_dir = state
 
-        self._init()
+    def _get_large_objects(self):
+        """
+        """
+        if not self._large_objects:
+            translator = KBTranslator(self._data_dir)
+            self._large_objects = tuple(k for k, _ in translator.large_obj.iteritems())
 
-    def loadLargeObjectDefinitions(self):
-        '''
-        Loads large objects.
-        '''
-        if not self.largeObjects:
-            TRANSLATOR = KBTranslator(self.data_dir)
-            self.largeObjects = [k for k, v in TRANSLATOR.large_obj.iteritems()]
-
-        #why return?
-        return self.largeObjects
-
-
-class LocationEvidenceGenerator(EvidenceGenerator):
-    '''
-    Produces location Evidence
-    This class is an abstract class that produces evidence of relative
-    and absolute locations of objects.
-    '''
-    implements(IEvidenceGenerator)
+        return self._large_objects
 
     def get_position_evidence(self, objects):
         """ objects: IObject
@@ -147,7 +125,7 @@ class LocationEvidenceGenerator(EvidenceGenerator):
         to every pixel
         '''
         objs = semMap.objects
-        classesLarge = self.loadLargeObjectDefinitions()
+        classes_large = self._get_large_objects()
 
         evidence = dict()
         evidence['names'] = list()
@@ -155,17 +133,17 @@ class LocationEvidenceGenerator(EvidenceGenerator):
 
         # get the types of objects in the semantic map
         for i, c in enumerate(objs):
-            if c.type in classesLarge:
+            if c.type in classes_large:
                 idx.append(i)
                 evidence['names'].append(c.type)
 
         # positions of large objects
-        objPos = np.zeros((3, len(idx)))
+        obj_pos = np.zeros((3, len(idx)))
         for i, val in enumerate(idx):
-            objPos[:, i] = np.array(get_location(objs[val].pose))
+            obj_pos[:, i] = np.array(get_location(objs[val].pose))
 
-        evidence['absEvidence'] = self._generate_mesh(objPos, epsilon, delta)
-        evidence['relEvidence'] = self.get_relative_evidence(objPos, evidence['absEvidence'])
+        evidence['absEvidence'] = self._generate_mesh(obj_pos, epsilon, delta)
+        evidence['relEvidence'] = self.get_relative_evidence(obj_pos, evidence['absEvidence'])
 
         return evidence
 

@@ -44,6 +44,11 @@ class NYUDataStructure(object):
     TEST_SET = 'groundTruthTest'
     TRAIN_SET = 'groundTruthTrain'
 
+    _images = ()
+    _classes = ()
+    _classesLarge = ()
+    _classesSmall = ()
+
     def __init__(self, path, selection):
         """
         """
@@ -53,24 +58,11 @@ class NYUDataStructure(object):
         if selection not in ['all', 'test', 'train']:
             raise ValueError("The argument 'selection' must be 'all', 'test', or 'train'.")
 
-        self._init()
-
-    def _init(self):
-        """ Initialization routine of cache attributes separate such that it can
-            be called from '__setstate__'.
-        """
-        self._images = ()
-        self._classes = ()
-        self._classesLarge = ()
-        self._classesSmall = ()
-
     def __getstate__(self):
         return self._path, self._selection
 
     def __setstate__(self, state):
         self._path, self._selection = state
-
-        self._init()
 
     @property
     def images(self):

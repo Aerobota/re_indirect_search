@@ -64,7 +64,7 @@ class ContinuousGMMLearner(object):
                 continue
 
             model.add_mixture(key, Mixture(self.doGMM(val), len(val)))
-            print('Learned parameters for the class pair:', key)
+            print('Learned parameters for the class pair: {0}'.format(key))
 
     def learn_one_sample(self, model, sem_map, small_objects):
         """ This is a method which implements the scenario where the locations
@@ -83,7 +83,7 @@ class ContinuousGMMLearner(object):
                     dist = np.asarray(small_object.loc) - np.asarray(get_location(large_object.pose))
                     cylindrical_dist = [np.sqrt(dist[1] ** 2 + dist[2] ** 2), dist[0]]
                     model.add_mixture(key, Mixture(self.doGMM([cylindrical_dist]), 1))
-                    print('Learned parameters for the class pair:', key)
+                    print('Learned parameters for the class pair: {0}'.format(key))
 
     def doGMM(self, samples):
         """ Learns the GMM probabilities for the particular class pair i,j

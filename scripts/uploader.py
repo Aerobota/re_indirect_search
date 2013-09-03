@@ -76,7 +76,8 @@ def looper(uploader, converter):
         print('Image name - {0}'.format(scene._obj_path))
         
         print('Processing frameID# - {0}'.format(frameID))
-        if frameID > 0:
+        #tmp break for debugging
+        if frameID > 1:
             break
 
         objs = scene.objects

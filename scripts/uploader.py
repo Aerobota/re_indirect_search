@@ -62,8 +62,8 @@ def looper(uploader, converter):
     ## Fixed Values
     cls = 'NYU_Depth_Dataset_V2' #Environment Class
     id_head = 'Scene_ID' #Environment ID
-    description = ('A scene from NYU Depth Dataset V2.'+ 
-                   'For more details see http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html.'+
+    description = ('A scene from NYU Depth Dataset V2.'
+                   'For more details see http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html.'
                    ' For the related software see http://github.com/IDSCETHZurich/re_indirect_search.git')
         
     environment = 'owl_string'

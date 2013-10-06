@@ -12,6 +12,7 @@
   <depend package="rospy"/>
   <depend package="geometry_msgs"/>
   <depend package="re_srvs"/>
+  <depend package="re_msgs"/>
   <depend package="mod_semantic_map"/>
 </package>
 

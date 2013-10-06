@@ -28,6 +28,7 @@
 
 import sys
 import os.path
+import struct
 
 import roslib; roslib.load_manifest('re_indirect_search')
 from rospkg import RosPack
@@ -36,21 +37,33 @@ import rospy
 from mod_semantic_map.srv import GenerateSemanticMapOWL
 from mod_semantic_map.msg import SemMap, SemMapObject
 from re_srvs.srv import SetEnvironment
+from re_msgs.msg import File
 
 from re_indirect_search.model import GMMModel
 from re_indirect_search.data_structure import NYUDataStructure
 from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
 from re_indirect_search.kb_translator import KBTranslator
 
-
-
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
+# THIS IS NOT PROVIDED WITH THIS PACKAGE, Use your own path 
+imgPath = '/home/gajan/Dropbox/Images/image/'
 
-
+def getFileMsg(filename):
+    fileMsg = File()
+    fileMsg.name=filename
+    try:
+        with open(imgPath+filename,'rb') as file:
+            tmpList = file.read()
+            fmt = '%db'%len(tmpList)
+            fileMsg.data = struct.unpack(fmt,tmpList)
+    except IOError as err:
+            print('File error: ' + str(err))
+    return fileMsg    
+        
 
 def looper(uploader, converter):
     model = GMMModel()
@@ -61,24 +74,24 @@ def looper(uploader, converter):
 
     ## Fixed Values
     cls = 'NYU_Depth_Dataset_V2' #Environment Class
-    id_head = 'Scene_ID' #Environment ID
-    description = ('A scene from NYU Depth Dataset V2.'
-                   'For more details see http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html.'
-                   ' For the related software see http://github.com/IDSCETHZurich/re_indirect_search.git')
+    id_head = 'Scene_ID-' #Environment ID
+    description = ('A scene from NYU Depth Dataset V2. '
+                   'For more details see http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html. '
+                   'For the related software see http://github.com/IDSCETHZurich/re_indirect_search.git')
         
     environment = 'owl_string'
-    apiKey = '6e616a616758cf1e985a387853dbb32b4c9bc683203864ae3c'
-    files = []
-    
+    apiKey = '6e616a616758cf1e985a387853dbb32b4c9bc683203864ae3c' #sample, use your own
+
     frameID = 1
 
     for scene in model._data_set.images:
-        print('Image name - {0}'.format(scene._obj_path))
-        
         print('Processing frameID# - {0}'.format(frameID))
-        #tmp break for debugging
-        if frameID > 1:
-            break
+
+        files = []        
+        
+        #print('Image name - {0}'.format(scene._img_name))
+        files.append(getFileMsg(scene._img_name))
+        files.append(getFileMsg(scene._img_name.replace('img_','depth_')))
 
         objs = scene.objects
         pos = evidence_generator.get_position_evidence(objs)
@@ -87,6 +100,7 @@ def looper(uploader, converter):
         sem_map.header.frame_id = 'NYU-DATASET#{0}'.format(frameID)
         sem_map.header.stamp = rospy.get_rostime()
 
+        #Create semantic map by adding all annotated objects
         for i, name in enumerate(obj.name for obj in objs):
             sem_obj = SemMapObject()
 
@@ -135,4 +149,3 @@ if __name__ == '__main__':
     converter = rospy.ServiceProxy('/knowrob_semantic_map_to_owl/generate_owl_map', GenerateSemanticMapOWL)
     
     looper(uploader, converter)
-    

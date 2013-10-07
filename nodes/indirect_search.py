@@ -104,7 +104,7 @@ def infer(req):
         resp.status = False
         return resp
 
-    _, small_objs = TRANSLATOR.split_large_and_small_objects([SmallObject(req.query_object)])
+    _, small_objs = TRANSLATOR.split_large_and_small_objects([SmallObject(req.query_object)]) #req.query_object is a KnowRob type
 
     if not small_objs:
         print('Query object type unknown!')
@@ -112,17 +112,17 @@ def infer(req):
         return resp
 
     # run query
-    candidates = MODEL.infer(sem_map, small_objs, STRETCH, GRID_RESOLUTION, MAX_DISTANCE)
+    candidates = MODEL.infer(sem_map, small_objs[0], STRETCH, GRID_RESOLUTION, MAX_DISTANCE)
 
     # reformat response
     resp = InferenceQueryResponse()
 
-    if small_objs[0] not in candidates:
+    if candidates is None:
         resp.status = False
     else:
         resp.status = True
 
-        for candidate in reversed(candidates[small_objs[0]]):
+        for candidate in candidates:
             resp.locations.append(Point(candidate.pos[0],
                                         candidate.pos[1],
                                         candidate.pos[2]))

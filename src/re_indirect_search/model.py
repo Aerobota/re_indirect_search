@@ -130,7 +130,7 @@ class GMMModel(object):
         """
         return self._evidence_generator.get_evidence(self._data_set)
 
-    def infer(self, sem_map, small_objects, epsilon, delta, max_distance):
+    def infer(self, sem_map, small_object, epsilon, delta, max_distance):
         '''
         This method infers the location of queried objects SMALLOBJECTS
         using SEMMAP. SMALLOBJECTS is a list of small object strings.
@@ -141,12 +141,11 @@ class GMMModel(object):
         '''
         # Get the probability distributions over the scenes'
         # point cloud and the location of each point in the cloud.
-        probVec, locVec = self._probabilities_for_semantic_map(sem_map, small_objects, delta, epsilon)
+        probVec, locVec = self._probabilities_for_semantic_map(sem_map, small_object, delta, epsilon)
 
-        return {obj : self._get_candidate_points(probVec[obj.type], locVec, max_distance)
-                for obj in small_objects}
+        return self._get_candidate_points(probVec, locVec, max_distance)
 
-    def _probabilities_for_semantic_map(self, sem_map, small_objects, epsilon, delta):
+    def _probabilities_for_semantic_map(self, sem_map, small_object, epsilon, delta):
         '''
         [PROBVEC,LOCVEC] = PROBABILITIESFORSEMMAP(SEMMAP,LOCLEARNER,SMALLOBJ)
         Returns the probability and position of each point in the scenes point
@@ -177,29 +176,29 @@ class GMMModel(object):
 
         # For each (small object) class and observed object
         # compute the pairwise probability
-        for obj in small_objects:
-            probVec[obj.type] = dict()
 
-            # for each (observed) large object
-            for idx_o in range(evidence['relEvidence'].shape[0]):
-                o = evidence['names'][idx_o]
-                if o == 'unknown': continue
-                # make sure object has unique identifier
-                ind = 1; o_ind = o
-                while o_ind in probVec[obj.type]:
-                    o_ind = o + str(ind)
-                    ind = ind + 1
-                # each row in mat should correspond to a single data point
-                mat = np.squeeze(evidence['relEvidence'][idx_o, :, :])
-                probVec[obj.type][o_ind] = np.exp(self._model[(o, obj.type)].CLF.score(mat))
-            try:
-                # Compute the mean of the pairwise probabilities
-                probVec[obj.type]['mean'] = np.sum(probVec[obj.type].values(), 0) / len(probVec[obj.type].values())
-            except ZeroDivisionError:
-                #observed large objects are apparently not in dataset
-                # make a uniform distribution
-                size = evidence['absEvidence'].shape[1]
-                probVec[obj.type]['mean'] = 1 / size * np.ones((1, size))
+        probVec = dict()
+
+        # for each (observed) large object
+        for idx_o in range(evidence['relEvidence'].shape[0]):
+            o = evidence['names'][idx_o]
+            if o == 'unknown': continue
+            # make sure object has unique identifier
+            ind = 1; o_ind = o
+            while o_ind in probVec:
+                o_ind = o + str(ind)
+                ind = ind + 1
+            # each row in mat should correspond to a single data point
+            mat = np.squeeze(evidence['relEvidence'][idx_o, :, :])
+            probVec[o_ind] = np.exp(self._model[(o, small_object.type)].CLF.score(mat))
+        try:
+            # Compute the mean of the pairwise probabilities
+            probVec['mean'] = np.sum(probVec.values(), 0) / len(probVec.values())
+        except ZeroDivisionError:
+            #observed large objects are apparently not in dataset
+            # make a uniform distribution
+            size = evidence['absEvidence'].shape[1]
+            probVec['mean'] = 1 / size * np.ones((1, size))
 
         # the absolute locations were returned with the evidence dictionary
         locVec = evidence['absEvidence']

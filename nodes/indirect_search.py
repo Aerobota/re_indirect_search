@@ -94,11 +94,11 @@ def learn(req):
 
 def infer(req):
     resp = InferenceQueryResponse()
-
+    
     # reformat request
     sem_map = req.map
-    sem_map.objects, _ = TRANSLATOR.split_large_and_small_objects(sem_map.objects)
-
+    sem_map.objects, _ = TRANSLATOR.split_large_and_small_objects(sem_map.objects) # throwing away all small objects and all unknown large objects from sem_map.objects
+    
     if not sem_map.objects: #No Known big objects
         print('No Known big objects!')
         resp.status = False

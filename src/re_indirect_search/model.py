@@ -135,8 +135,6 @@ class GMMModel(object):
         This method infers the location of queried objects SMALLOBJECTS
         using SEMMAP. SMALLOBJECTS is a list of small object strings.
 
-        Receives the pickled GMM models.
-
         Returns a dictionary CANDIDATEPOINTS
         which has small objects as keys and list of CANDIDATEPOINT structures
         as values.

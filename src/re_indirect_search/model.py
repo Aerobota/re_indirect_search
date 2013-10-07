@@ -139,7 +139,7 @@ class GMMModel(object):
         '''
         # Get the probability distributions over the scenes'
         # point cloud and the location of each point in the cloud.
-        probVec, locVec = self._probabilities_for_semantic_map(sem_map, small_object, delta, epsilon)
+        probVec, locVec = self._probabilities_for_semantic_map(sem_map, small_object, epsilon, delta)
 
         return self._get_candidate_points(probVec, locVec, max_distance)
 
@@ -168,27 +168,28 @@ class GMMModel(object):
         a point of the cloud.
 
         '''
-        evidence = self._evidence_generator.get_evidence_for_semantic_map(sem_map, epsilon, delta)
+        evidence = self._evidence_generator.get_evidence_for_semantic_map(sem_map, epsilon, delta) 
+        
+        '''
+        The above Generates evidence['relEvidence'], evidence['absEvidence']
+        relEvidence: for each large object in the semantic map
+        absEvidence: one set
+        '''
 
         probVec = dict()
-
-        # For each (small object) class and observed object
-        # compute the pairwise probability
-
-        probVec = dict()
-
+        
         # for each (observed) large object
         for idx_o in range(evidence['relEvidence'].shape[0]):
-            o = evidence['names'][idx_o]
-            if o == 'unknown': continue
-            # make sure object has unique identifier
-            ind = 1; o_ind = o
-            while o_ind in probVec:
-                o_ind = o + str(ind)
-                ind = ind + 1
+            name_large_obj = evidence['names'][idx_o]
+            if name_large_obj == 'unknown': continue
+#             # make sure object has unique identifier
+#             ind = 1; o_ind = o
+#             while o_ind in probVec:
+#                 o_ind = o + str(ind)
+#                 ind = ind + 1
             # each row in mat should correspond to a single data point
             mat = np.squeeze(evidence['relEvidence'][idx_o, :, :])
-            probVec[o_ind] = np.exp(self._model[(o, small_object.type)].CLF.score(mat))
+            probVec[name_large_obj] = np.exp(self._model[(name_large_obj, small_object.type)].CLF.score(mat))
         try:
             # Compute the mean of the pairwise probabilities
             probVec['mean'] = np.sum(probVec.values(), 0) / len(probVec.values())
@@ -197,10 +198,15 @@ class GMMModel(object):
             # make a uniform distribution
             size = evidence['absEvidence'].shape[1]
             probVec['mean'] = 1 / size * np.ones((1, size))
+            
+        
 
+        
         # the absolute locations were returned with the evidence dictionary
         locVec = evidence['absEvidence']
+        
 
+        
         return probVec, locVec
 
     def _get_candidate_points(self, probVec, locVec, maxDistance):
@@ -234,6 +240,7 @@ class GMMModel(object):
         probs = probVec['mean']
         ind = probs.argsort()
         probs = probs[:, ind]
+        print probs
         locVec = locVec[:, ind]
 
         # list of candidate points

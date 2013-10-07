@@ -88,7 +88,7 @@ def main():
 
     print('Run Inference query...')
     infer = rospy.ServiceProxy('infer', InferenceQuery)
-    candidates = infer(init_map(0.6, 0.6, 0.6), 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal')
+    candidates = infer(init_map(0.0, 0.0, 0.0), 'http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal')
 
     if not candidates.status:
         print('Inference query could not be processed.')

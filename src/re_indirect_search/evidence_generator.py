@@ -158,7 +158,7 @@ class LocationEvidenceGenerator(object):
             equidistant points inside this cube, each point DELTA away from
             each other.
         """
-        mins = obj_pos.min(axis=1) - epsilon
+        mins = obj_pos.min(axis=1) - epsilon # Minima along the second axis
         maxs = obj_pos.max(axis=1) + epsilon
 
         x = np.arange(mins[0], maxs[0] + delta, delta)
@@ -228,7 +228,7 @@ class CylindricalEvidenceGenerator(LocationEvidenceGenerator):
     '''
     def get_position_evidence(self, objs):
         '''
-        Return the positions of each object in the image
+        Return the positions of each object in the image1
         as a matrix of column stacked 3d-positions.
         '''
         return np.vstack(obj.pos for obj in objs).transpose()
@@ -251,7 +251,7 @@ class CylindricalEvidenceGenerator(LocationEvidenceGenerator):
             mat = vec[:, np.newaxis] - sourcePos[d, :]
             dist[:, :, d] = mat.transpose()
 
-        evidence[:, :, 0] = np.sqrt(dist[:, :, 1] ** 2 + dist[:, :, 2] ** 2)
-        evidence[:, :, 1] = dist[:, :, 0]
+        evidence[:, :, 0] = np.sqrt(dist[:, :, 0] ** 2 + dist[:, :, 1] ** 2) # sqrt(x^2 + y^2)
+        evidence[:, :, 1] = dist[:, :, 2] # z 
 
         return evidence

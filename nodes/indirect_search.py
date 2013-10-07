@@ -24,7 +24,6 @@
 #     See the License for the specific language governing permissions and
 #     limitations under the License.
 #
-#
 
 import os.path
 
@@ -47,8 +46,8 @@ DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
 MAX_DISTANCE = 1.0
-STRETCH = 0.5          # the amount by which the mesh is stretched
-GRID_RESOLUTION = 0.05 # fineness of the grid [m]
+STRETCH = 1.0          # the amount by which the mesh is stretched
+GRID_RESOLUTION = 0.1 # fineness of the grid [m]
 
 MODEL = GMMModel()
 TRANSLATOR = KBTranslator(DATA_PATH)

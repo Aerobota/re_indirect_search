@@ -65,16 +65,15 @@ def learn(req):
 
     # reformat request
     sem_map = req.map
-    sem_map.objects, known_small_objects = TRANSLATOR.split_large_and_small_objects(sem_map.objects)
+    known_large_objects, known_small_objects = TRANSLATOR.split_large_and_small_objects(sem_map.objects)
 
-    if not sem_map.objects or not known_small_objects:
+    if not known_large_objects or not known_small_objects:
         resp.status = False
         return resp
 
-    # Hardcoding for safety # TODO: Remove this by adding a check on known keys
+    # Hard coding for safety # TODO: Remove this by adding a check on known keys
     learning_candidates = ['breakfastcereal']
-
-    print known_small_objects
+    
 
     final_candidates = [obj for obj in known_small_objects if obj.type in learning_candidates]
 
@@ -82,11 +81,12 @@ def learn(req):
         resp.status = False
         return resp
 
-    small_objs = [SmallObject(obj.type, [obj.pose[3], obj.pose[7], obj.pose[11]]) for obj in final_candidates]
+    # TODO: Remove this specific definition of SmallObject
+    small_objects = [SmallObject(obj.type, [obj.pose[3], obj.pose[7], obj.pose[11]]) for obj in final_candidates]
 
     # run query
     learner = ContinuousGMMLearner()
-    learner.learn_one_sample(MODEL, sem_map, small_objs)
+    learner.learn_one_sample(MODEL, known_large_objects, small_objects)
 
     resp.status = True
     return resp
@@ -129,7 +129,6 @@ def infer(req):
             resp.probabilities.append(candidate.prob)
 
     return resp
-
 
 def main():
     rospy.init_node('indirect_search')

@@ -67,12 +67,13 @@ class KBTranslator(object):
         known_large_objects = []
 
         for obj in objects:
+            
             obj_type = self.inv_large_obj.get(obj.type)
-
             if obj_type:
                 obj.type = obj_type
                 known_large_objects.append(obj)
                 continue
+            obj_type = None
 
             obj_type = self.inv_small_obj.get(obj.type)
 

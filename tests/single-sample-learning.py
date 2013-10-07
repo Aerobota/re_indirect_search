@@ -80,7 +80,7 @@ def main():
         print('Learning was not successful!')
         return
 
-    #Learning sucessful
+    #Learning successful
     try:
         rospy.wait_for_service('infer')
     except rospy.ROSException:

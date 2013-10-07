@@ -39,7 +39,8 @@ get_location = lambda pose: (pose[3], pose[7], pose[11])
 
 
 class ContinuousGMMLearner(object):
-    """ Models relative location as a mixture of Gaussian
+    """ 
+        Models relative location as a mixture of Gaussian
         This method is used to learn a mixture of Gaussian models of the
         distribution of relative locations between object pairs.
 
@@ -66,24 +67,35 @@ class ContinuousGMMLearner(object):
             model.add_mixture(key, Mixture(self.doGMM(val), len(val)))
             print('Learned parameters for the class pair: {0}'.format(key))
 
-    def learn_one_sample(self, model, sem_map, small_objects):
+    def learn_one_sample(self, model, large_objects, small_objects):
         """ This is a method which implements the scenario where the locations
             of pairs of unknown small objects and known/unknown large object
             pairs are received and the task is to store their mean distance
             along with the previously learned models.
         """
-        for large_object in sem_map.objects:
-            large_name = large_object.type
-
+        for large_object in large_objects:
             for small_object in small_objects:
-                key = (large_name, small_object.type)
+                key = (large_object.type, small_object.type)
 
-                if not model.has_mixture(key):
+                if not model.has_mixture(key):                    
                     # learn from one sample and add it to model dictionary
                     dist = np.asarray(small_object.loc) - np.asarray(get_location(large_object.pose))
-                    cylindrical_dist = [np.sqrt(dist[1] ** 2 + dist[2] ** 2), dist[0]]
-                    model.add_mixture(key, Mixture(self.doGMM([cylindrical_dist]), 1))
-                    print('Learned parameters for the class pair: {0}'.format(key))
+                    cylindrical_dist = [np.sqrt(dist[0] ** 2 + dist[1] ** 2), dist[2]]
+                    mixture = Mixture(self.doGMM([cylindrical_dist]), 1)
+                    model.add_mixture(key, mixture)
+                    print('Learned parameters for the class pair: {key}\n'
+                           'Number of components: {components}\n'
+                           'Number of samples: {samples}\n'
+                           'Weights:\n{weights}\n'
+                           'Means:\n{means}\n'
+                           'Covariances:\n{covariances}'.format(
+                               key=key,
+                               components=mixture.CLF.n_components,
+                               samples=mixture.numSamples,
+                               weights=mixture.CLF.weights_,
+                               means=mixture.CLF.means_,
+                               covariances=mixture.CLF.covars_))
+                    
 
     def doGMM(self, samples):
         """ Learns the GMM probabilities for the particular class pair i,j

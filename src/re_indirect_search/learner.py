@@ -140,7 +140,7 @@ class ContinuousGMMLearner(object):
             # if sample size is 1 we have to make up 2 more samples
             # very close to the original data point
             if n_samples == 1:
-                eps = 0.001
+                eps = 0.1
                 np_samples = np.asarray(samples)
                 samples = np.vstack((np_samples, np_samples[0, :] - eps, np_samples[0, :] + eps))
 

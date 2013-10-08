@@ -30,6 +30,7 @@ import os.path
 import roslib; roslib.load_manifest('re_indirect_search')
 from rospkg import RosPack
 import rospy
+import numpy
 
 from geometry_msgs.msg import Point
 from re_indirect_search.srv import InferenceQuery, LearnQuery, InferenceQueryResponse, LearnQueryResponse
@@ -39,15 +40,14 @@ from re_indirect_search.data_structure import SmallObject
 from re_indirect_search.learner import ContinuousGMMLearner
 from re_indirect_search.kb_translator import KBTranslator
 
-
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
-MAX_DISTANCE = 1.0
-STRETCH = 1.0          # the amount by which the mesh is stretched
-GRID_RESOLUTION = 0.1 # fineness of the grid [m]
+MAX_DISTANCE = 0.5
+STRETCH = 0.4          # the amount by which the mesh is stretched
+GRID_RESOLUTION = 0.06 # fineness of the grid [m]
 
 MODEL = GMMModel()
 TRANSLATOR = KBTranslator(DATA_PATH)
@@ -122,12 +122,21 @@ def infer(req):
         resp.status = True
 
         for candidate in candidates:
-            resp.locations.append(Point(candidate.pos[0],
-                                        candidate.pos[1],
-                                        candidate.pos[2]))
-            resp.probabilities.append(candidate.prob)
-
-    return resp
+            # return only the locations that has a probability higher than some tresh hold.
+            if candidate.prob > 0.01:
+                resp.locations.append(Point(candidate.pos[0],
+                                            candidate.pos[1],
+                                            candidate.pos[2]))
+                resp.probabilities.append(candidate.prob)
+    
+    # check if the response contains at least one candidate point
+    if len(resp.locations)>0:    
+        resp.probabilities = resp.probabilities/numpy.sum(resp.probabilities)
+        return resp
+    else:
+        print 
+        resp.status = False
+        return resp
 
 def main():
     rospy.init_node('indirect_search')

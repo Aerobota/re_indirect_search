@@ -177,7 +177,6 @@ class GMMModel(object):
         '''
 
         probVec = dict()
-        
         # for each (observed) large object
         for idx_o in range(evidence['relEvidence'].shape[0]):
             name_large_obj = evidence['names'][idx_o]
@@ -192,20 +191,18 @@ class GMMModel(object):
             probVec[name_large_obj] = np.exp(self._model[(name_large_obj, small_object.type)].CLF.score(mat))
         try:
             # Compute the mean of the pairwise probabilities
+            # TODO: do a mean based on the sample sizes
             probVec['mean'] = np.sum(probVec.values(), 0) / len(probVec.values())
+            # normalize probVec['mean']
+            
         except ZeroDivisionError:
             #observed large objects are apparently not in dataset
             # make a uniform distribution
             size = evidence['absEvidence'].shape[1]
             probVec['mean'] = 1 / size * np.ones((1, size))
-            
-        
-
         
         # the absolute locations were returned with the evidence dictionary
         locVec = evidence['absEvidence']
-        
-
         
         return probVec, locVec
 
@@ -240,9 +237,8 @@ class GMMModel(object):
         probs = probVec['mean']
         ind = probs.argsort()
         probs = probs[:, ind]
-        print probs
         locVec = locVec[:, ind]
-
+        
         # list of candidate points
         candidatePoints = list()
         while locVec.shape[1] is not 0:
@@ -252,7 +248,10 @@ class GMMModel(object):
             candidatePoints.append(newCand)
             # Remove all cloud points in range of the new point
             probs, locVec = self._remove_covered_points(probs, locVec, newCand, maxDistance)
-
+        
+        # return all points without removing any
+#         for i, loc in enumerate(locVec):
+#             candidatePoints.append(CandidatePoint(probs[i],loc))
         return candidatePoints
 
     def _remove_covered_points(self, probVec, locVec, candPoint, maxDistance):

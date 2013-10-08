@@ -248,7 +248,7 @@ class GMMModel(object):
         while locVec.shape[1] is not 0:
             # Fit a candidate point to the location of highest
             # probability
-            newCand = CandidatePoint(probs[0], locVec[:, 0])
+            newCand = CandidatePoint(probs[-1], locVec[:, -1])
             candidatePoints.append(newCand)
             # Remove all cloud points in range of the new point
             probs, locVec = self._remove_covered_points(probs, locVec, newCand, maxDistance)

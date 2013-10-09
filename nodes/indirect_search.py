@@ -45,10 +45,10 @@ PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
-MAX_DISTANCE = 1.0
-STRETCH = 0.4          # the amount by which the mesh is stretched
+MAX_DISTANCE = 1.2    # 
+STRETCH = 2.0         # the amount by which the mesh is stretched, this should be larger than any mean of the model
 GRID_RESOLUTION = 0.1 # fineness of the grid [m]
-MAX_CANDIDATES = 3
+MAX_CANDIDATES = 10
 
 MODEL = GMMModel()
 TRANSLATOR = KBTranslator(DATA_PATH)
@@ -122,9 +122,6 @@ def infer(req):
         resp.status = True
         finalIndex = []
         totalProb = 0.0
-        
-        print 'len(probs)'
-        print len(probs)
         
         if len(probs)>MAX_CANDIDATES:
             resp.locations = points[0:MAX_CANDIDATES]

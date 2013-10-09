@@ -127,6 +127,25 @@ class GMMModel(object):
         """
         """
         return self._evidence_generator.get_evidence(self._data_set)
+    
+    def _print_mixture_info(self, key, mixture, additionalText='No additional text'):
+        """
+        For debugging
+        """
+        
+        print additionalText 
+        print 'Learned parameters for the class pair: {key}\n'\
+               'Number of components: {components}\n'\
+               'Number of samples: {samples}\n'\
+               'Weights:\n{weights}\n'\
+               'Means:\n{means}\n'\
+               'Covariances:\n{covariances}'.format(
+                   key=key,
+                   components=mixture.CLF.n_components,
+                   samples=mixture.numSamples,
+                   weights=mixture.CLF.weights_,
+                   means=mixture.CLF.means_,
+                   covariances=mixture.CLF.covars_)
 
     def infer(self, sem_map, small_object, epsilon, delta, max_distance):
         '''
@@ -177,6 +196,7 @@ class GMMModel(object):
         '''
 
         probVec = dict()
+        totalSamples = 0
         # for each (observed) large object
         for idx_o in range(evidence['relEvidence'].shape[0]):
             name_large_obj = evidence['names'][idx_o]
@@ -188,11 +208,18 @@ class GMMModel(object):
 #                 ind = ind + 1
             # each row in mat should correspond to a single data point
             mat = np.squeeze(evidence['relEvidence'][idx_o, :, :])
-            probVec[name_large_obj] = np.exp(self._model[(name_large_obj, small_object.type)].CLF.score(mat))
+            key = (name_large_obj, small_object.type)
+            mixture =  self._model[key]
+            probVec[name_large_obj] = np.exp(mixture.CLF.score(mat)) * mixture.numSamples
+            totalSamples = totalSamples + mixture.numSamples
+            
+            # Debugging
+            # self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
         try:
             # Compute the mean of the pairwise probabilities
             # TODO: do a mean based on the sample sizes
-            probVec['mean'] = np.sum(probVec.values(), 0) / len(probVec.values())
+            
+            probVec['mean'] = np.sum(probVec.values(), 0) / (len(probVec.values())*totalSamples)
             # normalize probVec['mean']
             
         except ZeroDivisionError:

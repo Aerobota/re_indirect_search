@@ -59,7 +59,7 @@ def list_data(args):
 
 
 def dump(args):
-    model = GMMModel()
+    model = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'))
 
     try:
         model.load(MODEL_PATH)
@@ -73,9 +73,8 @@ def dump(args):
 
 
 def learn(args):
-    model = GMMModel()
-    model.init(CylindricalEvidenceGenerator(DATA_PATH),
-               NYUDataStructure(DATA_PATH, 'all'))
+    model = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'))
+    #model.init(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train')) # set to all, during final demo
 
     learner = ContinuousGMMLearner()
     learner.learn_batch(model)

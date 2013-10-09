@@ -29,12 +29,17 @@ try:
 except ImportError:
     import pickle
 
+import jsonpickle
+from ast import literal_eval
+
 import numpy as np
 
 from zope.interface.verify import verifyObject
 from geometry_msgs.msg import Point
 
 from re_indirect_search.interfaces import IEvidenceGenerator, IDataSet
+
+
 
 class ModelError(Exception):
     """
@@ -44,25 +49,25 @@ class ModelError(Exception):
 class GMMModel(object):
     """ Model has to be either initialized or loaded!
     """
-    def __init__(self):
+    def __init__(self, evidenceGenerator, dataSet):
         """
         """
-        self._evidence_generator = None
-        self._data_set = None
-        self._model = None
-
-    def init(self, evidence_generator, data_set):
-        """
-        """
-        if self._model:
-            raise ModelError('Model data is already initialized.')
-
-        verifyObject(IEvidenceGenerator, evidence_generator)
-        verifyObject(IDataSet, data_set)
-
-        self._evidence_generator = evidence_generator
-        self._data_set = data_set
+        self._evidence_generator = evidenceGenerator
+        self._data_set = dataSet
         self._model = {}
+
+#     def init(self, evidence_generator, data_set):
+#         """
+#         """
+#         if self._model:
+#             raise ModelError('Model data is already initialized.')
+# 
+#         verifyObject(IEvidenceGenerator, evidence_generator)
+#         verifyObject(IDataSet, data_set)
+# 
+#         self._evidence_generator = evidence_generator
+#         self._data_set = data_set
+#         self._model = {}
 
     def load(self, model_file):
         """ Loads the GMM models.
@@ -73,11 +78,14 @@ class GMMModel(object):
         try:
             with open(model_file, 'rb') as f:
                 print('Loading GMM Models...')
-                data = pickle.load(f)
+                models = pickle.load(f)
         except IOError:
             raise ModelError('Model could not be loaded. File does not exist.')
-
-        self._model, self._evidence_generator, self._data_set = data
+        
+        #self._model, self._evidence_generator, self._data_set = data
+        
+        self._model = models_keys_fixed #json_unpickled_models
+        #print self._model
 
     def save(self, model_file):
         """ Saves the GMM models.
@@ -85,12 +93,12 @@ class GMMModel(object):
         if not self._model:
             raise ModelError('No model data available.')
 
-        data = (self._model, self._evidence_generator, self._data_set)
+        #data = (self._model, self._evidence_generator, self._data_set)
 
         try:
             with open(model_file, 'wb') as f:
                 print('Saving GMM Models...')
-                pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+                pickle.dump(self._model, f, pickle.HIGHEST_PROTOCOL)
         except IOError:
             raise ModelError('Model could not be saved.')
 
@@ -214,7 +222,7 @@ class GMMModel(object):
             totalSamples = totalSamples + mixture.numSamples
             
             # Debugging
-            # self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
+            self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
         try:
             # Compute the mean of the pairwise probabilities
             # TODO: do a mean based on the sample sizes

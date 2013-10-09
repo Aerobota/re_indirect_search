@@ -39,6 +39,8 @@ from re_indirect_search.model import ModelError, GMMModel
 from re_indirect_search.data_structure import SmallObject
 from re_indirect_search.learner import ContinuousGMMLearner
 from re_indirect_search.kb_translator import KBTranslator
+from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
+from re_indirect_search.data_structure import NYUDataStructure
 
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
@@ -50,7 +52,7 @@ STRETCH = 2.0         # the amount by which the mesh is stretched, this should b
 GRID_RESOLUTION = 0.1 # fineness of the grid [m]
 MAX_CANDIDATES = 10
 
-MODEL = GMMModel()
+MODEL = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'))
 TRANSLATOR = KBTranslator(DATA_PATH)
 
 try:

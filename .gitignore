@@ -9,8 +9,10 @@ src/re_indirect_search/srv
 *.pyc
 *.bak
 *~
+*.bin
 
 # Eclipse project files
+.cproject
 .project
 .pydevproject
 .settings

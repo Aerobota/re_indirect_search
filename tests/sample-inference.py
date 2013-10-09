@@ -57,9 +57,9 @@ def init_map():
     obj.depth = 1
     obj.width = 1
     obj.height = 1
-    obj.pose = [1.0, 0.0, 0.0, 5.0,
-                0.0, 1.0, 0.0, 5.0,
-                0.0, 0.0, 1.0, 5.0,
+    obj.pose = [1.0, 0.0, 0.0, 3.0,
+                0.0, 1.0, 0.0, 3.0,
+                0.0, 0.0, 1.0, 3.0,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)
 

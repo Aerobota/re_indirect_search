@@ -30,7 +30,7 @@ import os.path
 import roslib; roslib.load_manifest('re_indirect_search')
 from rospkg import RosPack
 import rospy
-import numpy
+import numpy as np
 
 from geometry_msgs.msg import Point
 from re_indirect_search.srv import InferenceQuery, LearnQuery, InferenceQueryResponse, LearnQueryResponse
@@ -45,9 +45,10 @@ PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
 MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
 
-MAX_DISTANCE = 0.5
+MAX_DISTANCE = 1.0
 STRETCH = 0.4          # the amount by which the mesh is stretched
-GRID_RESOLUTION = 0.06 # fineness of the grid [m]
+GRID_RESOLUTION = 0.1 # fineness of the grid [m]
+MAX_CANDIDATES = 3
 
 MODEL = GMMModel()
 TRANSLATOR = KBTranslator(DATA_PATH)
@@ -111,32 +112,38 @@ def infer(req):
         return resp
 
     # run query
-    candidates = MODEL.infer(sem_map, small_objs[0], STRETCH, GRID_RESOLUTION, MAX_DISTANCE)
-
-    # reformat response
+    probs,points = MODEL.infer(sem_map, small_objs[0], STRETCH, GRID_RESOLUTION, MAX_DISTANCE)
+    # The above is ordered list (probability descending)
+    
     resp = InferenceQueryResponse()
-
-    if candidates is None:
+    if points is None:
         resp.status = False
     else:
         resp.status = True
-
-        for candidate in candidates:
-            # return only the locations that has a probability higher than some tresh hold.
-            if candidate.prob > 0.01:
-                resp.locations.append(Point(candidate.pos[0],
-                                            candidate.pos[1],
-                                            candidate.pos[2]))
-                resp.probabilities.append(candidate.prob)
+        finalIndex = []
+        totalProb = 0.0
+        
+        print 'len(probs)'
+        print len(probs)
+        
+        if len(probs)>MAX_CANDIDATES:
+            resp.locations = points[0:MAX_CANDIDATES]
+            totProb = np.sum(probs[0:MAX_CANDIDATES])
+            resp.probabilities = [probs[i]/totProb for i in range(MAX_CANDIDATES)]                
+        else:
+            resp.locations = points
+            totProb = np.sum(probs)
+            resp.probabilities = [probs[i]/totProb for i in range(len(probs))]
+        
+#         for i, (prob, point) in enumerate(zip(probs, points)):
+#             if prob > 0.01: # 
+#                 finalIndex.append(i)
+#                 totalProb=totalProb+prob
+#     
+#         resp.locations = [points[i] for i in finalIndex]
+#         resp.probabilities = [probs[i]/totalProb for i in finalIndex]    
     
-    # check if the response contains at least one candidate point
-    if len(resp.locations)>0:    
-        resp.probabilities = resp.probabilities/numpy.sum(resp.probabilities)
-        return resp
-    else:
-        print 
-        resp.status = False
-        return resp
+    return resp
 
 def main():
     rospy.init_node('indirect_search')

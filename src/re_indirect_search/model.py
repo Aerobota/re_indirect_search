@@ -32,9 +32,9 @@ except ImportError:
 import numpy as np
 
 from zope.interface.verify import verifyObject
+from geometry_msgs.msg import Point
 
 from re_indirect_search.interfaces import IEvidenceGenerator, IDataSet
-
 
 class ModelError(Exception):
     """
@@ -239,22 +239,25 @@ class GMMModel(object):
         probs = probs[:, ind]
         locVec = locVec[:, ind]
         
+        reducedProbs = []
+        reducedPoints = []
+        
         # list of candidate points
         candidatePoints = list()
         while locVec.shape[1] is not 0:
             # Fit a candidate point to the location of highest
             # probability
-            newCand = CandidatePoint(probs[-1], locVec[:, -1])
-            candidatePoints.append(newCand)
+            reducedProbs.append(probs[-1])
+            reducedPoints.append(Point(locVec[0, -1],locVec[1,-1], locVec[2,-1])) #geometry_msgs/Point
             # Remove all cloud points in range of the new point
-            probs, locVec = self._remove_covered_points(probs, locVec, newCand, maxDistance)
+            probs, locVec = self._remove_covered_points(probs, locVec, locVec[:,-1], maxDistance)
         
         # return all points without removing any
 #         for i, loc in enumerate(locVec):
 #             candidatePoints.append(CandidatePoint(probs[i],loc))
-        return candidatePoints
+        return reducedProbs, reducedPoints
 
-    def _remove_covered_points(self, probVec, locVec, candPoint, maxDistance):
+    def _remove_covered_points(self, probVec, locVec, pos, maxDistance):
         '''
         Removes all points inside maxDistance of the candidate point
         @attention: Unlike matlab candPoint is passed as a structure
@@ -262,20 +265,12 @@ class GMMModel(object):
         '''
         # get 2nd dimension of locVec
         num = locVec.shape[1]
-        pos = candPoint.pos[:, np.newaxis]
+        pos = pos[:, np.newaxis]
         dist = (pos * np.ones((3, num))) - locVec
         pointsOutside = (sum(dist * dist) > (maxDistance * maxDistance))
-
+        
         locVec = locVec[:, pointsOutside]
         probVec = probVec[:, pointsOutside]
-
+        
         return probVec, locVec
-
-
-class CandidatePoint(object):
-    '''
-    Used to represent the candidate points
-    '''
-    def __init__(self, prob, locVec):
-        self.prob = prob
-        self.pos = locVec
+    

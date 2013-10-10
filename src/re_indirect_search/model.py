@@ -33,6 +33,7 @@ import jsonpickle
 from ast import literal_eval
 
 import numpy as np
+from sklearn import mixture
 
 from zope.interface.verify import verifyObject
 from geometry_msgs.msg import Point
@@ -77,15 +78,27 @@ class GMMModel(object):
 
         try:
             with open(model_file, 'rb') as f:
-                print('Loading GMM Models...')
-                models = pickle.load(f)
+                print('Loading GMM Models...'),
+                json_unpickled_models = jsonpickle.decode(f.read())
         except IOError:
             raise ModelError('Model could not be loaded. File does not exist.')
         
-        #self._model, self._evidence_generator, self._data_set = data
+        #TODO: Move this stuff to the class?
+        models = {literal_eval(key):value for key, value in json_unpickled_models.items()}
+    
+        for key, value in models.items():
+            oldCLF = models[key].CLF
+            n_components = literal_eval(models[key].CLF.n_components)
+            clf = mixture.GMM(n_components=n_components, covariance_type='full')
+            
+            models[key].CLF = clf 
+            models[key].CLF.covars_ = np.array(literal_eval(oldCLF.covars_.replace('array','')))
+            models[key].CLF.means_ = np.array(literal_eval(oldCLF.means_.replace('array','')))
+            models[key].CLF.weights_ = np.array(literal_eval(oldCLF.weights_.replace('array','')))
         
-        self._model = models_keys_fixed #json_unpickled_models
+        self._model = models #models_keys_fixed 
         #print self._model
+        print 'Done'
 
     def save(self, model_file):
         """ Saves the GMM models.
@@ -96,9 +109,8 @@ class GMMModel(object):
         #data = (self._model, self._evidence_generator, self._data_set)
 
         try:
-            with open(model_file, 'wb') as f:
-                print('Saving GMM Models...')
-                pickle.dump(self._model, f, pickle.HIGHEST_PROTOCOL)
+            with open(model_file,'w') as f:
+                f.write(jsonpickle.encode(self._model,max_depth=3))
         except IOError:
             raise ModelError('Model could not be saved.')
 
@@ -218,11 +230,12 @@ class GMMModel(object):
             mat = np.squeeze(evidence['relEvidence'][idx_o, :, :])
             key = (name_large_obj, small_object.type)
             mixture =  self._model[key]
+
             probVec[name_large_obj] = np.exp(mixture.CLF.score(mat)) * mixture.numSamples
             totalSamples = totalSamples + mixture.numSamples
             
             # Debugging
-            self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
+            #self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
         try:
             # Compute the mean of the pairwise probabilities
             # TODO: do a mean based on the sample sizes

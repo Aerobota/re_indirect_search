@@ -41,7 +41,7 @@ from re_indirect_search.evidence_generator import CylindricalEvidenceGenerator
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
-MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
+MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.json')
 
 
 def clean(args):

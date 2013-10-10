@@ -45,7 +45,7 @@ from re_indirect_search.data_structure import NYUDataStructure
 ## SET PARAMETERS
 PKG_PATH = RosPack().get_path('re_indirect_search')
 DATA_PATH = os.path.join(PKG_PATH, 'data')
-MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.bin')
+MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.json')
 
 MAX_DISTANCE = 1.2    # 
 STRETCH = 2.0         # the amount by which the mesh is stretched, this should be larger than any mean of the model

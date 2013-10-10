@@ -59,13 +59,14 @@ class ContinuousGMMLearner(object):
         print('Learning GMM Models ...')
 
         # Iterate through the relative location samples (dictionary)
-        for key, val in model.get_evidence().iteritems():
-            if 'unknown' in key or not len(val):
-                # skip if unknown objects are included
+        mixtures = model.get_evidence()
+        num_of_mixtures = len(mixtures)
+        for i, key in enumerate(mixtures):
+            if len(mixtures[key])==0: #no samples
                 continue
 
-            model.add_mixture(key, Mixture(self.doGMM(val), len(val)))
-            print('Learned parameters for the class pair: {0}'.format(key))
+            model.add_mixture(key, Mixture(self.doGMM(mixtures[key]), len(mixtures[key])))
+            print('Learned parameters for the class pair: {key} ({current_mixture}/~{num_of_mixtures})'.format(key=key,current_mixture=str(i+1),num_of_mixtures=num_of_mixtures))
 
     def learn_one_sample(self, model, large_objects, small_objects):
         """ This is a method which implements the scenario where the locations

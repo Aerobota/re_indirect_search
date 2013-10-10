@@ -51,6 +51,7 @@ class LocationEvidenceGenerator(object):
         """
         """
         self._data_dir = data_dir
+        self._translator = KBTranslator(self._data_dir)
 
     def __getstate__(self):
         return self._data_dir
@@ -88,9 +89,10 @@ class LocationEvidenceGenerator(object):
             The format of the samples depends on the implementation of
             GETRELATIVEEVIDENCE in the derived class.
         """
-        evidence = {classPair : np.zeros((0, 2))
-                    for classPair in itertools.product(data_set.classNames, repeat=2)}
-
+        evidence = {(large_obj, small_obj) : np.zeros((0, 2))
+                        for large_obj in self._translator.large_obj.keys()
+                            for small_obj in self._translator.small_obj.keys()}
+        
         # go through each room scanning for evidence
         for image in data_set.images:
             objs = image.objects
@@ -98,15 +100,11 @@ class LocationEvidenceGenerator(object):
             relEvidence = self.get_relative_evidence(pos, pos)
             names = tuple(obj.name for obj in objs)
 
-            #storing also the distance of small-small and large-large object occurrences
             for i in range(len(names)):
                 for j in range(len(names)):
-                    try:
+                    if (names[i], names[j]) in evidence.keys():
                         evidence[(names[i], names[j])] = \
                         np.vstack((evidence[(names[i], names[j])], relEvidence[i, j, :]))
-                    except KeyError:
-                        print 'This should not happen!'
-                        raise
 
         return evidence
 

@@ -130,7 +130,7 @@ class ContinuousGMMLearner(object):
             kOPT = score.argmin() + 1
 
             # train model with optimal component size
-            clf = mixture.GMM(n_components=kOPT, covariance_type='full')
+            clf = mixture.GMM(n_components=kOPT, covariance_type='diag')
             clf.fit(samples)
         else:
             kOPT = 1
@@ -186,7 +186,7 @@ class ContinuousGMMLearner(object):
 
             Using Scikit-learn to implement GMM.
         """
-        clf = mixture.GMM(n_components=k, covariance_type='full')
+        clf = mixture.GMM(n_components=k, covariance_type='diag')
 
         # train with EM
         clf.fit(trainSet)

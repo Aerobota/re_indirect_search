@@ -90,7 +90,7 @@ class GMMModel(object):
         for key, value in models.items():
             oldCLF = models[key].CLF
             n_components = literal_eval(models[key].CLF.n_components)
-            clf = mixture.GMM(n_components=n_components, covariance_type='full')
+            clf = mixture.GMM(n_components=n_components, covariance_type='diag')
             
             models[key].CLF = clf 
             models[key].CLF.covars_ = np.array(literal_eval(oldCLF.covars_.replace('array','')))
@@ -237,7 +237,7 @@ class GMMModel(object):
             totalSamples = totalSamples + mixture.numSamples
             
             # Debugging
-            #self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
+            self._print_mixture_info(key,mixture,'_probabilities_for_semantic_map')
         try:
             # Compute the mean of the pairwise probabilities
             # TODO: do a mean based on the sample sizes

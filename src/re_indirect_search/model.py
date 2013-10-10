@@ -30,6 +30,7 @@ except ImportError:
     import pickle
 
 import jsonpickle
+import simplejson
 from ast import literal_eval
 
 import numpy as np
@@ -110,7 +111,8 @@ class GMMModel(object):
 
         try:
             with open(model_file,'w') as f:
-                f.write(jsonpickle.encode(self._model,max_depth=3))
+                json_pickle_output = jsonpickle.encode(self._model,max_depth=3)
+                f.write(simplejson.dumps(simplejson.loads(json_pickle_output), indent=4))
         except IOError:
             raise ModelError('Model could not be saved.')
 

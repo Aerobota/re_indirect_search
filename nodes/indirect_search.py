@@ -52,7 +52,7 @@ STRETCH = 2.0         # the amount by which the mesh is stretched, this should b
 GRID_RESOLUTION = 0.1 # fineness of the grid [m]
 MAX_CANDIDATES = 10
 
-MODEL = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'))
+MODEL = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'),'diag') #last arg. is the covariance_type
 TRANSLATOR = KBTranslator(DATA_PATH)
 
 try:

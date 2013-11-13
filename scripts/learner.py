@@ -73,7 +73,7 @@ def dump(args):
 
 
 def learn(args):
-    model = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'))
+    model = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'),'diag')
     #model.init(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train')) # set to all, during final demo
 
     learner = ContinuousGMMLearner()

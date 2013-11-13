@@ -51,12 +51,14 @@ class ModelError(Exception):
 class GMMModel(object):
     """ Model has to be either initialized or loaded!
     """
-    def __init__(self, evidenceGenerator, dataSet):
+    def __init__(self, evidenceGenerator, dataSet, covariance_type):
         """
         """
         self._evidence_generator = evidenceGenerator
         self._data_set = dataSet
+        self.covariance_type = covariance_type
         self._model = {}
+        
 
 #     def init(self, evidence_generator, data_set):
 #         """
@@ -90,7 +92,7 @@ class GMMModel(object):
         for key, value in models.items():
             oldCLF = models[key].CLF
             n_components = literal_eval(models[key].CLF.n_components)
-            clf = mixture.GMM(n_components=n_components, covariance_type='diag')
+            clf = mixture.GMM(n_components=n_components, covariance_type=self.covariance_type)
             
             models[key].CLF = clf 
             models[key].CLF.covars_ = np.array(literal_eval(oldCLF.covars_.replace('array','')))

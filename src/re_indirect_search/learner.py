@@ -65,7 +65,7 @@ class ContinuousGMMLearner(object):
             if len(mixtures[key])==0: #no samples
                 continue
 
-            model.add_mixture(key, Mixture(self.doGMM(mixtures[key]), len(mixtures[key])))
+            model.add_mixture(key, Mixture(self._doGMM(mixtures[key], model.covariance_type), len(mixtures[key])))
             print('Learned parameters for the class pair: {key} ({current_mixture}/~{num_of_mixtures})'.format(key=key,current_mixture=str(i+1),num_of_mixtures=num_of_mixtures))
 
     def learn_one_sample(self, model, large_objects, small_objects):
@@ -82,7 +82,7 @@ class ContinuousGMMLearner(object):
                     # learn from one sample and add it to model dictionary
                     dist = np.asarray(small_object.loc) - np.asarray(get_location(large_object.pose))
                     cylindrical_dist = [np.sqrt(dist[0] ** 2 + dist[1] ** 2), dist[2]]
-                    mixture = Mixture(self.doGMM([cylindrical_dist]), 1)
+                    mixture = Mixture(self._doGMM([cylindrical_dist], model.covariance_type), 1)
                     model.add_mixture(key, mixture)
                     print('Learned parameters for the class pair: {key}\n'
                            'Number of components: {components}\n'
@@ -98,7 +98,7 @@ class ContinuousGMMLearner(object):
                                covariances=mixture.CLF.covars_))
                     
 
-    def doGMM(self, samples):
+    def _doGMM(self, samples, covariance_type):
         """ Learns the GMM probabilities for the particular class pair i,j
             with samples containing distance information as a list of 2-d vectors.
 
@@ -124,19 +124,19 @@ class ContinuousGMMLearner(object):
                 # For every possible number of components calculate the score
                 # and add the scores for all dataset splits
                 for k in xrange(self.maxComponents):
-                    score[k] = score[k] + self._evaluate_model_complexity(train, test, k + 1)
+                    score[k] = score[k] + self._evaluate_model_complexity(train, test, k + 1, covariance_type)
 
             # find the lowest cost
             kOPT = score.argmin() + 1
 
             # train model with optimal component size
-            clf = mixture.GMM(n_components=kOPT, covariance_type='diag')
+            clf = mixture.GMM(n_components=kOPT, covariance_type=covariance_type)
             clf.fit(samples)
         else:
             kOPT = 1
 
             # initialize model without doing EM
-            clf = mixture.GMM(n_components=kOPT, covariance_type='diag')
+            clf = mixture.GMM(n_components=kOPT, covariance_type=covariance_type)
 
             # if sample size is 1 we have to make up 2 more samples
             # very close to the original data point
@@ -174,7 +174,7 @@ class ContinuousGMMLearner(object):
             else:
                 raise ValueError('Can not split and concatenate samples')
 
-    def _evaluate_model_complexity(self, trainSet, testSet, k):
+    def _evaluate_model_complexity(self, trainSet, testSet, k, covariance_type):
         """ Evaluate the Bayesian Information Criterion (BIC) score
             of the GMM where the BIC is defined as:
 
@@ -186,7 +186,7 @@ class ContinuousGMMLearner(object):
 
             Using Scikit-learn to implement GMM.
         """
-        clf = mixture.GMM(n_components=k, covariance_type='diag')
+        clf = mixture.GMM(n_components=k, covariance_type=covariance_type)
 
         # train with EM
         clf.fit(trainSet)

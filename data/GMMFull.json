@@ -3413,7 +3413,7 @@
             "params": "'wmc'",
             "n_components": "1",
             "thresh": "0.01",
-            "means_": "array([[ 0.1,  0.7]])",
+            "means_": "array([[ 0.1,  0.5]])",
             "covars_": "array([[ 0.3,  0.2]])",
             "n_init": "1"
         },
@@ -3688,13 +3688,13 @@
             "converged_": "True",
             "n_iter": "100",
             "init_params": "'wmc'",
-            "weights_": "array([ 0.45877322,  0.17492852,  0.36629827])",
+            "weights_": "array([ 1.])",
             "random_state": "None",
             "params": "'wmc'",
-            "n_components": "3",
+            "n_components": "1",
             "thresh": "0.01",
-            "means_": "array([[  7.33029164e-01,   1.04842771e-03],\n       [  2.99247080e+00,   5.27746456e+00],\n       [  1.78987392e+00,  -1.23262978e+00]])",
-            "covars_": "array([[ 0.21358773,  0.08399672],\n       [ 0.1307552 ,  0.14686798],\n       [ 0.90778258,  2.52082522]])",
+            "means_": "array([[ 0.0, 0.5]])",
+            "covars_": "array([[ 0.3,  0.3 ]])",
             "n_init": "1"
         },
         "numSamples": 200

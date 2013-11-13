@@ -44,3 +44,4 @@ clothes:http://ias.cs.tum.edu/kb/knowrob.owl#Cloth
 floorMat:http://ias.cs.tum.edu/kb/knowrob.owl#FloorMat
 lamp:http://ias.cs.tum.edu/kb/knowrob.owl#ElectricalLightingDevice
 BreakfastCereal:http://ias.cs.tum.edu/kb/knowrob.owl#BreakfastCereal
+PringlesBox:http://ias.cs.tum.edu/kb/knowrob.owl#PringlesBox

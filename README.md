@@ -8,6 +8,8 @@ Before rosmake you may nedd to install the python module scikit-learn
 
 	sudo apt-get install build-essential python-dev python-numpy python-setuptools python-scipy libatlas-dev libatlas3-base
 	sudo pip install -U scikit-learn 
+	sudo pip install -U jsonpickle
+	sudo pip install simplejson
 
 ###Usage
 

@@ -138,15 +138,15 @@ def infer(req):
         resp.bigObjectProbability = np.zeros(len(resp.bigObjectIDs))
         tmp = np.zeros(len(resp.bigObjectIDs))
         
-        i = 0
+        #i = 0
         for pos, prob in zip(resp.locations, resp.pointProbabilities):
             
             for index, obj in enumerate(sem_map.objects):
                 tmp[index] = (obj.pose[3]-pos.x)**2 + (obj.pose[7]-pos.y)**2 + (obj.pose[11]-pos.z)**2
 
             resp.bigObjectProbability[np.argmin(tmp)] += prob
-            print(' {0}: object index={1}, prob={2} dist={3}'.format(i,np.argmin(tmp), prob, tmp))
-            i=i+1
+            #print(' {0}: object index={1}, prob={2} dist={3}'.format(i,np.argmin(tmp), prob, tmp))
+            #i=i+1
 
     return resp
 

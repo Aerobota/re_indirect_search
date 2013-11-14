@@ -140,6 +140,7 @@ class LocationEvidenceGenerator(object):
         for i, val in enumerate(idx):
             obj_pos[:, i] = np.array(get_location(objs[val].pose))
 
+        
         evidence['absEvidence'] = self._generate_mesh(obj_pos, epsilon, delta)
         evidence['relEvidence'] = self.get_relative_evidence(obj_pos, evidence['absEvidence'])
 

@@ -40,8 +40,8 @@ def init_map():
     obj = SemMapObject()
     obj.id = 100
     obj.partOf = 0
-    #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
-    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
+    #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
     obj.depth = 1
     obj.width = 1
     obj.height = 1
@@ -59,24 +59,24 @@ def init_map():
     obj.width = 1
     obj.height = 1
     obj.pose = [1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 2.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)
     
-#     obj = SemMapObject()
-#     obj.id = 33
-#     obj.partOf = 0
-#     #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
-#     obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
-#     obj.depth = 1
-#     obj.width = 1
-#     obj.height = 1
-#     obj.pose = [1.0, 0.0, 0.0, 0.0,
-#                 0.0, 1.0, 0.0, 0.0,
-#                 0.0, 0.0, 1.0, 0.0,
-#                 0.0, 0.0, 0.0, 1.0]
-#     sem_map.objects.append(obj)
+    obj = SemMapObject()
+    obj.id = 300
+    obj.partOf = 0
+    #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
+    obj.depth = 1
+    obj.width = 1
+    obj.height = 1
+    obj.pose = [1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0]
+    sem_map.objects.append(obj)
 
     return sem_map
 

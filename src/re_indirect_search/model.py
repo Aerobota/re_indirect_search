@@ -222,7 +222,7 @@ class GMMModel(object):
         probVec = dict()
         totalSamples = 0
         # for each (observed) large object
-        for idx_o in range(evidence['relEvidence'].shape[0]):
+        for idx_o in range(evidence['relEvidence'].shape[0]):  
             name_large_obj = evidence['names'][idx_o]
             if name_large_obj == 'unknown': continue
 #             # make sure object has unique identifier
@@ -235,7 +235,8 @@ class GMMModel(object):
             key = (name_large_obj, small_object.type)
             mixture =  self._model[key]
 
-            probVec[name_large_obj] = np.exp(mixture.CLF.score(mat)) * mixture.numSamples
+            #probVec[name_large_obj] = np.exp(mixture.CLF.score(mat)) * mixture.numSamples
+            probVec[idx_o] = np.exp(mixture.CLF.score(mat)) * mixture.numSamples
             totalSamples = totalSamples + mixture.numSamples
             
             # Debugging

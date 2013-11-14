@@ -41,39 +41,25 @@ def init_map():
     obj.id = 100
     obj.partOf = 0
     obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
-    #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
     obj.depth = 1
     obj.width = 1
     obj.height = 1
-    obj.pose = [1.0, 0.0, 0.0, 2.0,
-                0.0, 1.0, 0.0, 0.0,
+    obj.pose = [1.0, 0.0, 0.0, 2.38,
+                0.0, 1.0, 0.0, 3.84,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)
 
     obj = SemMapObject()
-    obj.id = 200
-    obj.partOf = 0
-    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
-    obj.depth = 1
-    obj.width = 1
-    obj.height = 1
-    obj.pose = [1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 2.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0]
-    sem_map.objects.append(obj)
-    
-    obj = SemMapObject()
-    obj.id = 300
+    obj.id = 400
     obj.partOf = 0
     #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
     obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
     obj.depth = 1
     obj.width = 1
     obj.height = 1
-    obj.pose = [1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
+    obj.pose = [1.0, 0.0, 0.0, 1.51,
+                0.0, 1.0, 0.0, 2.88,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)

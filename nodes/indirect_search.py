@@ -48,7 +48,7 @@ MODEL_PATH = os.path.join(DATA_PATH, 'GMMFull.json')
 
 MAX_DISTANCE = 1.2    # 
 STRETCH = 2.0         # the amount by which the mesh is stretched, this should be larger than any mean of the model
-GRID_RESOLUTION = 0.1 # fineness of the grid [m]
+GRID_RESOLUTION = 0.1 # fineness of the grid [m] # typical value 0.1 [m]
 MAX_CANDIDATES = 10
 
 MODEL = GMMModel(CylindricalEvidenceGenerator(DATA_PATH), NYUDataStructure(DATA_PATH, 'train'),'diag') #last arg. is the covariance_type
@@ -124,23 +124,30 @@ def infer(req):
         finalIndex = []
         totalProb = 0.0
         
-        if len(probs)>MAX_CANDIDATES:
-            resp.locations = points[0:MAX_CANDIDATES]
-            totProb = np.sum(probs[0:MAX_CANDIDATES])
-            resp.probabilities = [probs[i]/totProb for i in range(MAX_CANDIDATES)]                
-        else:
-            resp.locations = points
-            totProb = np.sum(probs)
-            resp.probabilities = [probs[i]/totProb for i in range(len(probs))]
+        length = len(probs)
+        if length>MAX_CANDIDATES:
+            length = MAX_CANDIDATES
+
+        resp.locations = points[0:length]
+        totProb = np.sum(probs[0:length])
+        resp.pointProbabilities = [probs[i]/totProb for i in range(length)]   
         
-#         for i, (prob, point) in enumerate(zip(probs, points)):
-#             if prob > 0.01: # 
-#                 finalIndex.append(i)
-#                 totalProb=totalProb+prob
-#     
-#         resp.locations = [points[i] for i in finalIndex]
-#         resp.probabilities = [probs[i]/totalProb for i in finalIndex]    
-    
+        ##    fill in big objects and corresponding probabilities    ##
+        resp.bigObjectIDs = [obj.id for obj in sem_map.objects]            
+        
+        resp.bigObjectProbability = np.zeros(len(resp.bigObjectIDs))
+        tmp = np.zeros(len(resp.bigObjectIDs))
+        
+        i = 0
+        for pos, prob in zip(resp.locations, resp.pointProbabilities):
+            
+            for index, obj in enumerate(sem_map.objects):
+                tmp[index] = (obj.pose[3]-pos.x)**2 + (obj.pose[7]-pos.y)**2 + (obj.pose[11]-pos.z)**2
+
+            resp.bigObjectProbability[np.argmin(tmp)] += prob
+            print(' {0}: object index={1}, prob={2} dist={3}'.format(i,np.argmin(tmp), prob, tmp))
+            i=i+1
+
     return resp
 
 def main():

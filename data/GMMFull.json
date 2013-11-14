@@ -3413,8 +3413,8 @@
             "params": "'wmc'",
             "n_components": "1",
             "thresh": "0.01",
-            "means_": "array([[ 0.1,  0.5]])",
-            "covars_": "array([[ 0.3,  0.2]])",
+            "means_": "array([[ 0.0,  0.4]])",
+            "covars_": "array([[ 0.2,  0.2]])",
             "n_init": "1"
         },
         "numSamples": 53
@@ -3694,7 +3694,7 @@
             "n_components": "1",
             "thresh": "0.01",
             "means_": "array([[ 0.0, 0.5]])",
-            "covars_": "array([[ 0.3,  0.3 ]])",
+            "covars_": "array([[ 0.2,  0.2 ]])",
             "n_init": "1"
         },
         "numSamples": 200
@@ -5948,13 +5948,13 @@
             "converged_": "True",
             "n_iter": "100",
             "init_params": "'wmc'",
-            "weights_": "array([ 0.66772054,  0.33227946])",
+            "weights_": "array([ 1])",
             "random_state": "None",
             "params": "'wmc'",
             "n_components": "2",
             "thresh": "0.01",
-            "means_": "array([[ 1.94359222,  0.12979621],\n       [ 0.57936222,  0.33756169]])",
-            "covars_": "array([[ 0.55599855,  4.84489924],\n       [ 0.10259415,  0.93037846]])",
+            "means_": "array([[ 0.1,  0.12]])",
+            "covars_": "array([[ 0.2,  0,2]])",
             "n_init": "1"
         },
         "numSamples": 274

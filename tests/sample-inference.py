@@ -38,7 +38,21 @@ def init_map():
     sem_map.header.frame_id = 'http://www.example.com/foo.owl#'
 
     obj = SemMapObject()
-    obj.id = 1
+    obj.id = 100
+    obj.partOf = 0
+    #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
+    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
+    obj.depth = 1
+    obj.width = 1
+    obj.height = 1
+    obj.pose = [1.0, 0.0, 0.0, 2.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                0.0, 0.0, 0.0, 1.0]
+    sem_map.objects.append(obj)
+
+    obj = SemMapObject()
+    obj.id = 200
     obj.partOf = 0
     obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
     obj.depth = 1
@@ -49,19 +63,20 @@ def init_map():
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 1.0]
     sem_map.objects.append(obj)
-
-    obj = SemMapObject()
-    obj.id = 1
-    obj.partOf = 0
-    obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
-    obj.depth = 1
-    obj.width = 1
-    obj.height = 1
-    obj.pose = [1.0, 0.0, 0.0, 2.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                0.0, 0.0, 0.0, 1.0]
-    sem_map.objects.append(obj)
+    
+#     obj = SemMapObject()
+#     obj.id = 33
+#     obj.partOf = 0
+#     #obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Cabinet-PieceOfFurniture'
+#     obj.type = 'http://ias.cs.tum.edu/kb/knowrob.owl#Bed-PieceOfFurniture'
+#     obj.depth = 1
+#     obj.width = 1
+#     obj.height = 1
+#     obj.pose = [1.0, 0.0, 0.0, 0.0,
+#                 0.0, 1.0, 0.0, 0.0,
+#                 0.0, 0.0, 1.0, 0.0,
+#                 0.0, 0.0, 0.0, 1.0]
+#     sem_map.objects.append(obj)
 
     return sem_map
 
@@ -84,8 +99,12 @@ def main():
         return
 
     print('Result:')
-    for pos, prob in zip(candidates.locations, candidates.probabilities):
+    for pos, prob in zip(candidates.locations, candidates.pointProbabilities):
         print('  [{0}, {1}, {2}] - {3}'.format(pos.x, pos.y, pos.z, prob))
+        
+    print '\nBig Objects'
+    for object_id, prob in zip(candidates.bigObjectIDs, candidates.bigObjectProbability):
+        print('{0}    :{1}'.format(object_id, prob))
 
 
 if __name__ == '__main__':

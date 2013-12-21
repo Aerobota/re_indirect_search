@@ -49,7 +49,6 @@ Before rosmake you may nedd to install the python module scikit-learn
 	Default value for the time option 1.0 [s]
 
 ### Notes for RoboEarth Final Demonstrator
--	Fine tuning the parameters is still a TODO. You may see some surprising values.
 -	For naming convensions see data/objectDefinitions.txt. This file has a one-to-one mapping between KnowRob definitions and the names used in the NYU dataset. 
 
 
